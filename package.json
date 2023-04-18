@@ -20,5 +20,9 @@
     "esbuild": "^0.15.18",
     "prettier": "2.8.1",
     "serve": "^14.1.2"
+  },
+  "dependencies": {
+    "@studio-freight/lenis": "^1.0.7",
+    "gsap": "^3.11.5"
   }
 }
