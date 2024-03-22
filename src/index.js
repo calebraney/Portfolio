@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let excludedClass = 'no-transition';
 
   // On Page Load
-  if (transitionTrigger.length > 0) {
+  if (transitionTrigger) {
     transitionTrigger.click();
     $('body').addClass('no-scroll-transition');
     lenis.stop();

@@ -90,7 +90,7 @@ export const cursor = function () {
   handleMouseEvents('[cursor="image-white"]', [imageWhiteClass, minorClass, notBlendedClass]);
 
   // Cursor is next case white on case study pages
-  handleMouseEvents('.cs-next_component', [nextCaseWhiteClass, notBlendedClass]);
+  handleMouseEvents('.cs-next_component', [null, nextCaseWhiteClass, , notBlendedClass]);
 };
 
 /*
@@ -186,3 +186,100 @@ export const cursor = function () {
   });
 
 */
+
+/*
+
+export const cursor = function () {
+  const cursorInner = document.querySelector('[cursor="inner"]');
+  const cursorOuter = document.querySelector('[cursor="outer"]');
+  const cursorComponent = document.querySelector('[cursor="component"]');
+  //guard clause for cursor elements
+  if (!cursorInner || !cursorOuter || !cursorComponent) return;
+  const cursorElements = [cursorInner, cursorOuter, cursorComponent];
+  // Option classes
+  const minorClass = 'is-cursor-minor';
+  const vanishedClass = 'is-vanished';
+  const viewPageClass = 'is-view-page';
+  const viewCaseClass = 'is-view-case';
+  const nextCaseClass = 'is-next-case';
+  const prevCaseClass = 'is-prev-case';
+  const letsGoClass = 'is-lets-go';
+  const imageBlackClass = 'is-image-black';
+  const imageWhiteClass = 'is-image-white';
+  const nextCaseWhiteClass = 'is-next-case-w';
+  const notBlendedClass = 'is-not-blended';
+  const blackClass = 'is-black';
+
+  // Function to toggle class
+  function toggleClass(element, className) {
+    if (element.classList.contains(className)) {
+      element.classList.remove(className);
+    } else {
+      element.classList.add(className);
+    }
+  }
+
+  // Function to handle mouseenter and mouseleave events
+  function handleMouseEvents(selector, cursorClasses) {
+    const elements = document.querySelectorAll(selector);
+    if (elements.length === 0) return;
+    elements.forEach((element) => {
+      if (!element) return;
+      element.addEventListener('mouseover', () => {
+        console.log('enter');
+
+        cursorElements.forEach((element, index) => {
+          if (cursorClasses[index] !== undefined) {
+            toggleClass(element, cursorClasses[index]);
+          }
+        });
+      });
+      element.addEventListener('mouseout', () => {
+        cursorElements.forEach((element, index) => {
+          if (cursorClasses[index] !== undefined) {
+            toggleClass(element, cursorClasses[index]);
+          }
+        });
+      });
+    });
+  }
+
+  // Cursor .is-cursor-minor global
+  handleMouseEvents(
+    '.is-cursor-minor, .text-style-link, .menu_small-text-link, .footer_primary-link, .footer_text-link, .footer_icon, .cta_block-item, .pitch_image-wrap, .home-work_text-link, .work_arrow-link',
+    [minorClass, minorClass]
+  );
+
+  // Cursor .is-cursor-minor attribute
+  handleMouseEvents('[cursor="minor"]', [minorClass, minorClass]);
+
+  // Cursor scrolls over item with view-page attribute
+  handleMouseEvents('[cursor="view-page"]', [vanishedClass, viewPageClass, notBlendedClass]);
+
+  // Cursor scrolls over item with view-page attribute
+  handleMouseEvents('[cursor="view-case"]', [vanishedClass, viewCaseClass, notBlendedClass]);
+
+  // Cursor .is-view-case and .is-black
+  handleMouseEvents('.home-work_item', [blackClass, viewCaseClass, notBlendedClass]);
+
+  // Cursor .is-view-case and .is-vanished
+  handleMouseEvents('.work_button-circle', [vanishedClass, viewCaseClass, notBlendedClass]);
+
+  // Cursor .is-next-case global
+  handleMouseEvents('.is-next-case', [vanishedClass, nextCaseClass, notBlendedClass]);
+
+  // Cursor .is-prev-case global
+  handleMouseEvents('.is-prev-case', [vanishedClass, prevCaseClass, notBlendedClass]);
+
+  // Cursor scrolls over item with lets-go attribute
+  handleMouseEvents('[cursor="lets-go"]', [vanishedClass, letsGoClass, notBlendedClass]);
+
+  // Cursor scrolls over item with image-black attribute
+  handleMouseEvents('[cursor="image-black"]', [imageBlackClass, minorClass, notBlendedClass]);
+
+  // Cursor scrolls over item with image-white attribute
+  handleMouseEvents('[cursor="image-white"]', [imageWhiteClass, minorClass, notBlendedClass]);
+
+  // Cursor is next case white on case study pages
+  handleMouseEvents('.cs-next_component', [nextCaseWhiteClass, notBlendedClass]);
+};*/
