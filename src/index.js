@@ -1,11 +1,20 @@
 import Lenis from '@studio-freight/lenis';
+import { attr } from './utilities';
 import { mouseOver } from './interactions/mouseOver';
+import { hoverActive } from './interactions/hoverActive';
+import { scrolling } from './interactions/scrolling';
 
 document.addEventListener('DOMContentLoaded', function () {
   //document loaded
 
   // GSAP ANIMATIONS
-  gsap.registerPlugin(ScrollTrigger);
+  // register gsap plugins if available
+  if (gsap.ScrollTrigger !== undefined) {
+    gsap.registerPlugin(ScrollTrigger);
+  }
+  if (gsap.Flip !== undefined) {
+    gsap.registerPlugin(Flip);
+  }
 
   //LENIS Smoothscroll
   const lenis = new Lenis({
@@ -49,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   //PRE-LOADER CODE
   //Load Animation
-  let transitionTrigger = $('.transition-trigger');
+  let transitionTrigger = document.querySelector('.transition-trigger');
   let introDurationMS = 1600;
   let exitDurationMS = 1800;
   let excludedClass = 'no-transition';
@@ -270,6 +279,64 @@ document.addEventListener('DOMContentLoaded', function () {
     );
   });
 
+  //////////////////////
+  // Blog Interactions
+  const blogHeaderScroll = function () {
+    const section = document.querySelector('.secton-blog-list');
+    const title = document.querySelector('.blog-hero_h1-wrapper');
+    const squares = document.querySelectorAll('.blog-hero_square');
+    if (!section || !title || squares.length === 0) return;
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: 'top bottom',
+        end: 'top top',
+        scrub: 0.5,
+      },
+      defaults: {
+        ease: 'none',
+        duration: 1,
+      },
+    });
+    tl.to(title, {
+      color: '#ffffff',
+      ease: 'power2.Out',
+    });
+    tl.fromTo(
+      squares,
+      {
+        rotateZ: 45,
+      },
+      {
+        rotateZ: 275,
+        // stagger: { each: 0.2, from: 'left' },
+      },
+      '<'
+    );
+  };
+
+  //animate boxes
+  const blogHeaderBoxes = function () {
+    const squares = document.querySelectorAll('.blog-hero_square');
+    if (squares.length === 0) return;
+    const tl = gsap.timeline({
+      //   yoyo: true,
+    });
+    tl.fromTo(
+      squares,
+      {
+        borderRadius: '100%',
+      },
+      {
+        borderRadius: '0%',
+        ease: 'power1.Out',
+        duration: 1.5,
+        stagger: { each: 0.25, from: 'start', repeat: -1, yoyo: true },
+      },
+      '<'
+    );
+  };
+
   //////////////////////////////
   //Control Functions on page load
   const gsapInit = function () {
@@ -286,9 +353,14 @@ document.addEventListener('DOMContentLoaded', function () {
         let { isMobile, isTablet, isDesktop, reduceMotion } = gsapContext.conditions;
         // let individual instances decide if they are run
         mouseOver(gsapContext);
+        scrolling(gsapContext);
+        hoverActive(gsapContext);
+        // cursor();
+        blogHeaderScroll();
+        blogHeaderBoxes();
+
         //globaally run animations on specific breakpoints
         if (isDesktop || isTablet) {
-          cursor();
         }
       }
     );
