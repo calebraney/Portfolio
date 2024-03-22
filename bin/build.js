@@ -2,7 +2,7 @@ import * as esbuild from 'esbuild';
 
 await esbuild
   .build({
-    entryPoints: ['src/global.js', 'src/blog.js'],
+    entryPoints: ['src/index.js', 'src/blog.js'],
     bundle: true,
     minify: true,
     watch: true,
