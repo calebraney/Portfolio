@@ -35,8 +35,6 @@ export const cursor = function () {
     elements.forEach((element) => {
       if (!element) return;
       element.addEventListener('mouseover', () => {
-        console.log('enter');
-
         cursorElements.forEach((element, index) => {
           if (cursorClasses[index] !== undefined) {
             toggleClass(element, cursorClasses[index]);
