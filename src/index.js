@@ -6,6 +6,7 @@ import { scrollInHeading } from './interactions/scrollIn';
 import { sectionEdge } from './interactions/sectionEdge';
 import { cursor } from './interactions/cursor';
 import { homePitchMarquee } from './pages/home';
+import { contact } from './pages/contact';
 import { blogHeaderBoxes, blogHeaderScroll } from './pages/blog';
 import { toggleClass } from './utilities';
 
@@ -211,6 +212,8 @@ document.addEventListener('DOMContentLoaded', function () {
         //blog
         blogHeaderScroll();
         blogHeaderBoxes();
+        //contact
+        contact();
 
         //globaally run animations on specific breakpoints
         if (isDesktop || isTablet) {

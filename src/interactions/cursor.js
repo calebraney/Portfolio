@@ -52,34 +52,22 @@ export const cursor = function () {
 
   // Cursor .is-cursor-minor attribute
   handleMouseEvents('[cursor="minor"]', [minorClass, minorClass]);
-
   // Cursor scrolls over item with view-page attribute
   handleMouseEvents('[cursor="view-page"]', [vanishedClass, viewPageClass, notBlendedClass]);
-
   // Cursor scrolls over item with view-page attribute
   handleMouseEvents('[cursor="view-case"]', [vanishedClass, viewCaseClass, notBlendedClass]);
-
-  // Cursor .is-view-case and .is-black
-  handleMouseEvents('.home-work_item', [blackClass, viewCaseClass, notBlendedClass]);
-
-  // Cursor .is-view-case and .is-vanished
-  handleMouseEvents('.work_button-circle', [vanishedClass, viewCaseClass, notBlendedClass]);
-
-  // Cursor .is-next-case global
-  handleMouseEvents('.is-next-case', [vanishedClass, nextCaseClass, notBlendedClass]);
-
-  // Cursor .is-prev-case global
-  handleMouseEvents('.is-prev-case', [vanishedClass, prevCaseClass, notBlendedClass]);
-
   // Cursor scrolls over item with lets-go attribute
   handleMouseEvents('[cursor="lets-go"]', [vanishedClass, letsGoClass, notBlendedClass]);
-
   // Cursor scrolls over item with image-black attribute
   handleMouseEvents('[cursor="image-black"]', [imageBlackClass, minorClass, notBlendedClass]);
-
   // Cursor scrolls over item with image-white attribute
   handleMouseEvents('[cursor="image-white"]', [imageWhiteClass, minorClass, notBlendedClass]);
-
+  // Cursor .is-view-case and .is-black
+  handleMouseEvents('.home-work_item', [blackClass, viewCaseClass, notBlendedClass]);
+  // Cursor .is-next-case global
+  handleMouseEvents('.is-next-case', [vanishedClass, nextCaseClass, notBlendedClass]);
+  // Cursor .is-prev-case global
+  handleMouseEvents('.is-prev-case', [vanishedClass, prevCaseClass, notBlendedClass]);
   // Cursor is next case white on case study pages
   handleMouseEvents('.cs-next_component', [null, nextCaseWhiteClass, , notBlendedClass]);
 };
