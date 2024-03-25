@@ -6,14 +6,20 @@ export const contact = function () {
     const SELECTED_CLASS = 'is-selected-item';
     const input = event.currentTarget;
     const formGroup = input.closest('.form_group');
-    if (!formGroup) return;
+    const selectedLink = input.closest('.form_link');
 
-    const selectedItem = formGroup.querySelector('.is-selected-item');
-    if (!selectedItem) return;
-
-    selectedItem.classList.remove(SELECTED_CLASS);
-    input.nextElementSibling.classList.toggle(SELECTED_CLASS);
-    input.closest('.form_link').classList.toggle(SELECTED_CLASS);
+    if (!formGroup || !selectedLink) return;
+    const groupLinks = formGroup.querySelectorAll('.form_link');
+    groupLinks.forEach((link) => {
+      const circle = link.querySelector('.form_link-circle');
+      if (link !== selectedLink) {
+        link.classList.remove(SELECTED_CLASS);
+        circle.classList.remove(SELECTED_CLASS);
+      } else {
+        link.classList.add(SELECTED_CLASS);
+        circle.classList.add(SELECTED_CLASS);
+      }
+    });
   }
   // Add event listener for radio button inputs
   document.querySelectorAll('.is-options .form_link input').forEach(function (input) {
