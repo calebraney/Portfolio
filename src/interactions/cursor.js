@@ -1,3 +1,5 @@
+import { toggleClass } from '../utilities';
+
 export const cursor = function () {
   const cursorInner = document.querySelector('[cursor="inner"]');
   const cursorOuter = document.querySelector('[cursor="outer"]');
@@ -18,15 +20,6 @@ export const cursor = function () {
   const nextCaseWhiteClass = 'is-next-case-w';
   const notBlendedClass = 'is-not-blended';
   const blackClass = 'is-black';
-
-  // Function to toggle class
-  function toggleClass(element, className) {
-    if (element.classList.contains(className)) {
-      element.classList.remove(className);
-    } else {
-      element.classList.add(className);
-    }
-  }
 
   // Function to handle mouseenter and mouseleave events
   function handleMouseEvents(selector, cursorClasses) {
@@ -53,7 +46,7 @@ export const cursor = function () {
 
   // Cursor .is-cursor-minor global
   handleMouseEvents(
-    '.is-cursor-minor, .text-style-link, .menu_small-text-link, .footer_primary-link, .footer_text-link, .footer_icon, .cta_block-item, .pitch_image-wrap, .home-work_text-link, .work_arrow-link',
+    '.text-style-link, .menu_small-text-link, .cta_block-item, .pitch_image-wrap, .work_arrow-link',
     [minorClass, minorClass]
   );
 

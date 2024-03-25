@@ -2,7 +2,12 @@ import Lenis from '@studio-freight/lenis';
 import { mouseOver } from './interactions/mouseOver';
 import { hoverActive } from './interactions/hoverActive';
 import { scrolling } from './interactions/scrolling';
+import { scrollInHeading } from './interactions/scrollIn';
+import { sectionEdge } from './interactions/sectionEdge';
 import { cursor } from './interactions/cursor';
+import { homePitchMarquee } from './pages/home';
+import { blogHeaderBoxes, blogHeaderScroll } from './pages/blog';
+import { toggleClass } from './utilities';
 
 document.addEventListener('DOMContentLoaded', function () {
   //document loaded
@@ -43,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function () {
   let secondClick = false;
   document.querySelector('.nav-button_component').addEventListener('click', () => {
     secondClick = !secondClick;
-
     if (secondClick) stopScroll();
     else startScroll();
   });
@@ -55,56 +59,63 @@ document.addEventListener('DOMContentLoaded', function () {
   function startScroll() {
     lenis.start();
   }
+  // PRE-LOADER CODE
+  const pageTransition = function () {
+    // Load Animation
+    const component = document.querySelector('.transition');
+    const transitionTrigger = document.querySelector('.transition-trigger');
+    let introDurationMS = 1600;
+    let exitDurationMS = 1800;
+    let excludedClass = 'no-transition';
 
-  //PRE-LOADER CODE
-  //Load Animation
-  let transitionTrigger = document.querySelector('.transition-trigger');
-  let introDurationMS = 1600;
-  let exitDurationMS = 1800;
-  let excludedClass = 'no-transition';
-
-  // On Page Load
-  if (transitionTrigger) {
-    transitionTrigger.click();
-    $('body').addClass('no-scroll-transition');
-    lenis.stop();
-    setTimeout(() => {
-      $('body').removeClass('no-scroll-transition');
-      lenis.start();
-    }, introDurationMS);
-  }
-  // On Link Click
-  $('a').on('click', function (e) {
-    if (
-      $(this).prop('hostname') == window.location.host &&
-      $(this).attr('href').indexOf('#') === -1 &&
-      !$(this).hasClass(excludedClass) &&
-      $(this).attr('target') !== '_blank' &&
-      transitionTrigger.length > 0
-    ) {
-      e.preventDefault();
-      $('body').addClass('no-scroll-transition');
-      let transitionURL = $(this).attr('href');
+    // On Page Load
+    if (transitionTrigger) {
       transitionTrigger.click();
-      setTimeout(function () {
-        window.location = transitionURL;
-      }, exitDurationMS);
-    }
-  });
-  // On Back Button Tap
-  window.onpageshow = function (event) {
-    if (event.persisted) {
-      window.location.reload();
-    }
-  };
-  // Hide Transition on Window Width Resize
-  setTimeout(() => {
-    $(window).on('resize', function () {
+      document.body.classList.add('no-scroll-transition');
+      lenis.stop();
       setTimeout(() => {
-        $('.transition').css('display', 'none');
-      }, 50);
+        document.body.classList.remove('no-scroll-transition');
+        lenis.start();
+      }, introDurationMS);
+    }
+
+    // On Link Click
+    document.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        if (
+          this.hostname == window.location.hostname &&
+          this.getAttribute('href').indexOf('#') === -1 &&
+          !this.classList.contains(excludedClass) &&
+          this.getAttribute('target') !== '_blank' &&
+          transitionTrigger
+        ) {
+          e.preventDefault();
+          document.body.classList.add('no-scroll-transition');
+          let transitionURL = this.getAttribute('href');
+          transitionTrigger.click();
+          setTimeout(() => {
+            window.location.href = transitionURL;
+          }, exitDurationMS);
+        }
+      });
     });
-  }, introDurationMS);
+
+    // On Back Button Tap
+    window.onpageshow = function (event) {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    };
+
+    // Hide Transition on Window Width Resize
+    setTimeout(() => {
+      window.addEventListener('resize', function () {
+        setTimeout(() => {
+          component.style.display = 'none';
+        }, 50);
+      });
+    }, introDurationMS);
+  };
 
   // Allow Zooming for Accessibility
   let zoomLevel = Math.round((window.devicePixelRatio * 100) / 2);
@@ -128,129 +139,50 @@ document.addEventListener('DOMContentLoaded', function () {
   // });
 
   //RANDOM INTERACTIONS CODE
-  //Button .is-hovered added to button circle
-  $('.button_link').on('mouseenter mouseleave', function () {
-    $(this).find('.button_circle').toggleClass('is-hovered');
-    $(this).toggleClass('is-hovered');
-  });
+  // Function to handle mouse enter and leave events for button link
+  const buttonHover = function () {
+    const BUTTON_LINK = '.button_link';
+    const BUTTON_CIRCLE = '.button_circle';
+    const activeClass = 'is-hovered';
 
-  // Adds is clicked class to cta block
-  $('.cta_block-item').on('click', function () {
-    $(this).toggleClass('is-clicked');
-  });
-
-  // Section Edge Shrink Animation
-  $("[gsap-el='edge-shrink']").each(function (index) {
-    let targetElement = $(this);
-
-    let tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: targetElement,
-        // trigger element - viewport
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 0.8,
-      },
+    const buttonLinks = document.querySelectorAll(BUTTON_LINK);
+    if (buttonLinks.length === 0) return;
+    buttonLinks.forEach((item) => {
+      if (!item) return;
+      const buttonCircle = item.querySelector(BUTTON_CIRCLE);
+      item.addEventListener('mouseenter', function (e) {
+        toggleClass(item, activeClass);
+        toggleClass(buttonCircle, activeClass);
+      });
+      item.addEventListener('mouseleave', function (e) {
+        toggleClass(item, activeClass);
+        toggleClass(buttonCircle, activeClass);
+      });
     });
-    tl.fromTo(
-      targetElement,
-      {
-        height: '100%',
-        duration: 1,
-      },
-      {
-        height: '15%',
-        duration: 1,
-      }
-    );
-  });
-
-  // Section Edge Grow Animation
-  $("[gsap-el='edge-grow']").each(function (index) {
-    let targetElement = $(this);
-
-    let tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: targetElement,
-        // trigger element - viewport
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 0.8,
-      },
-    });
-    tl.fromTo(
-      targetElement,
-      {
-        height: '15%',
-        duration: 1,
-      },
-      {
-        height: '100%',
-        duration: 1,
-      }
-    );
-  });
-
-  //////////////////////
-  // Blog Interactions
-  const blogHeaderScroll = function () {
-    const section = document.querySelector('.secton-blog-list');
-    const title = document.querySelector('.blog-hero_h1-wrapper');
-    const squares = document.querySelectorAll('.blog-hero_square');
-    if (!section || !title || squares.length === 0) return;
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: 'top bottom',
-        end: 'top top',
-        scrub: 0.5,
-      },
-      defaults: {
-        ease: 'none',
-        duration: 1,
-      },
-    });
-    tl.to(title, {
-      color: '#ffffff',
-      ease: 'power2.Out',
-    });
-    tl.fromTo(
-      squares,
-      {
-        rotateZ: 45,
-      },
-      {
-        rotateZ: 275,
-        // stagger: { each: 0.2, from: 'left' },
-      },
-      '<'
-    );
   };
 
-  //animate boxes
-  const blogHeaderBoxes = function () {
-    const squares = document.querySelectorAll('.blog-hero_square');
-    if (squares.length === 0) return;
-    const tl = gsap.timeline({
-      //   yoyo: true,
+  // Function to toggle 'is-clicked' class on cta block item
+  const toggleCTABlocks = function (event) {
+    const ctaBlocks = document.querySelectorAll('.cta_block-item');
+    const activeClass = 'is-clicked';
+    if (ctaBlocks.length === 0) return;
+    ctaBlocks.forEach((item) => {
+      if (!item) return;
+      item.addEventListener('click', function (e) {
+        toggleClass(item, activeClass);
+      });
     });
-    tl.fromTo(
-      squares,
-      {
-        borderRadius: '100%',
-      },
-      {
-        borderRadius: '0%',
-        ease: 'power1.Out',
-        duration: 1.5,
-        stagger: { each: 0.25, from: 'start', repeat: -1, yoyo: true },
-      },
-      '<'
-    );
   };
+
+  // Function to make cta block item and is-draggable elements draggable
+  function makeDraggable() {
+    const selector = '.cta_block-item, .is-draggable';
+    $(selector).draggable();
+  }
 
   //////////////////////////////
   //Control Functions on page load
+  pageTransition();
   const gsapInit = function () {
     let mm = gsap.matchMedia();
     mm.add(
@@ -263,11 +195,20 @@ document.addEventListener('DOMContentLoaded', function () {
       },
       (gsapContext) => {
         let { isMobile, isTablet, isDesktop, reduceMotion } = gsapContext.conditions;
-        // let individual instances decide if they are run
+        // library interactions
         mouseOver(gsapContext);
         scrolling(gsapContext);
         hoverActive(gsapContext);
+        scrollInHeading(gsapContext);
+        //custom interactions
         cursor();
+        buttonHover();
+        toggleCTABlocks();
+        makeDraggable();
+        sectionEdge();
+        //homepage
+        homePitchMarquee();
+        //blog
         blogHeaderScroll();
         blogHeaderBoxes();
 

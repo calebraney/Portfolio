@@ -1,3 +1,4 @@
+import SplitType from 'split-type';
 // attribute value checker
 export const attr = function (defaultVal, attrVal) {
   //get the type of the default
@@ -11,10 +12,10 @@ export const attr = function (defaultVal, attrVal) {
 };
 
 //split text utility
-export const runSplit = function (text) {
+export const runSplit = function (text, types = 'lines, words') {
   if (!text) return;
   typeSplit = new SplitType(text, {
-    types: 'lines, words',
+    types: types,
   });
   return typeSplit;
 };
@@ -49,4 +50,13 @@ export const checkBreakpoints = function (item, animationID, gsapContext) {
   if (runDesktop === false && isDesktop) return false;
   // if no conditions match
   return true;
+};
+
+// Function to toggle class
+export const toggleClass = function (element, className) {
+  if (element.classList.contains(className)) {
+    element.classList.remove(className);
+  } else {
+    element.classList.add(className);
+  }
 };
