@@ -2,7 +2,7 @@ import Lenis from '@studio-freight/lenis';
 import { mouseOver } from './interactions/mouseOver';
 import { hoverActive } from './interactions/hoverActive';
 import { scrolling } from './interactions/scrolling';
-import { scrollInHeading } from './interactions/scrollIn';
+import { scrollIn } from './interactions/scrollIn';
 import { sectionEdge } from './interactions/sectionEdge';
 import { cursor } from './interactions/cursor';
 import { homePitchMarquee } from './pages/home';
@@ -45,13 +45,19 @@ document.addEventListener('DOMContentLoaded', function () {
   // allow scrolling on overflow elements
   //document.querySelector('.over--scroll').setAttribute("onwheel", "event.stopPropagation()");
 
-  // Click Event Listener for Nav Button
-  let secondClick = false;
-  document.querySelector('.nav-button_component').addEventListener('click', () => {
-    secondClick = !secondClick;
-    if (secondClick) stopScroll();
-    else startScroll();
-  });
+  const navScroll = function () {
+    // Click Event Listener for Nav Button
+    let secondClick = false;
+    const navButton = document.querySelector('.nav-button_component');
+    if (!navButton) return;
+    navButton.addEventListener('click', () => {
+      secondClick = !secondClick;
+      if (secondClick) stopScroll();
+      else startScroll();
+    });
+  };
+  navScroll();
+
   // On first click of nav stop scrolling
   function stopScroll() {
     lenis.stop();
@@ -178,6 +184,8 @@ document.addEventListener('DOMContentLoaded', function () {
   // Function to make cta block item and is-draggable elements draggable
   function makeDraggable() {
     const selector = '.cta_block-item, .is-draggable';
+    const items = document.querySelectorAll(selector);
+    if (items.length === 0) return;
     $(selector).draggable();
   }
 
@@ -197,10 +205,12 @@ document.addEventListener('DOMContentLoaded', function () {
       (gsapContext) => {
         let { isMobile, isTablet, isDesktop, reduceMotion } = gsapContext.conditions;
         // library interactions
-        mouseOver(gsapContext);
-        scrolling(gsapContext);
+        if (!reduceMotion) {
+          mouseOver(gsapContext);
+          scrolling(gsapContext);
+          scrollIn(gsapContext);
+        }
         hoverActive(gsapContext);
-        scrollInHeading(gsapContext);
         //custom interactions
         cursor();
         buttonHover();
