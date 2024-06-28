@@ -1,4 +1,4 @@
-import { toggleClass } from '../utilities';
+import { toggleClass, checkBreakpoints } from '../utilities';
 
 export const cursor = function (gsapContext) {
   //animation ID
@@ -26,11 +26,6 @@ export const cursor = function (gsapContext) {
   if (runOnBreakpoint === false) return;
 
   const cursorHover = function () {
-    const cursorInner = document.querySelector('[cursor="inner"]');
-    const cursorOuter = document.querySelector('[cursor="outer"]');
-    const cursorWrap = document.querySelector('[cursor="component"]');
-    //guard clause for cursor elements
-    if (!cursorInner || !cursorOuter || !cursorWrap) return;
     const cursorElements = [cursorInner, cursorOuter, cursorWrap];
     // Option classes
     const minorClass = 'is-cursor-minor';
@@ -76,17 +71,33 @@ export const cursor = function (gsapContext) {
     );
 
     // Cursor .is-cursor-minor attribute
-    handleMouseEvents('[cursor="minor"]', [minorClass, minorClass]);
+    handleMouseEvents('[data-ix-cursor="minor"]', [minorClass, minorClass]);
     // Cursor scrolls over item with view-page attribute
-    handleMouseEvents('[cursor="view-page"]', [vanishedClass, viewPageClass, notBlendedClass]);
+    handleMouseEvents('[data-ix-cursor="view-page"]', [
+      vanishedClass,
+      viewPageClass,
+      notBlendedClass,
+    ]);
     // Cursor scrolls over item with view-page attribute
-    handleMouseEvents('[cursor="view-case"]', [vanishedClass, viewCaseClass, notBlendedClass]);
+    handleMouseEvents('[data-ix-cursor="view-case"]', [
+      vanishedClass,
+      viewCaseClass,
+      notBlendedClass,
+    ]);
     // Cursor scrolls over item with lets-go attribute
-    handleMouseEvents('[cursor="lets-go"]', [vanishedClass, letsGoClass, notBlendedClass]);
+    handleMouseEvents('[data-ix-cursor="lets-go"]', [vanishedClass, letsGoClass, notBlendedClass]);
     // Cursor scrolls over item with image-black attribute
-    handleMouseEvents('[cursor="image-black"]', [imageBlackClass, minorClass, notBlendedClass]);
+    handleMouseEvents('[data-ix-cursor="image-black"]', [
+      imageBlackClass,
+      minorClass,
+      notBlendedClass,
+    ]);
     // Cursor scrolls over item with image-white attribute
-    handleMouseEvents('[cursor="image-white"]', [imageWhiteClass, minorClass, notBlendedClass]);
+    handleMouseEvents('[data-ix-cursor="image-white"]', [
+      imageWhiteClass,
+      minorClass,
+      notBlendedClass,
+    ]);
     // Cursor .is-view-case and .is-black
     handleMouseEvents('.home-work_item', [blackClass, viewCaseClass, notBlendedClass]);
     // Cursor .is-next-case global
@@ -111,6 +122,7 @@ export const cursor = function (gsapContext) {
   const cursorMove = function (element, delay = false) {
     // object that stores the value of the progress so it can be animated
     let progressObject = { x: 0, y: 0 };
+    console.log(element);
 
     // Create X timeline
     let cursorXTimeline = gsap.timeline({ paused: true, defaults: { ease: 'none' } });
@@ -126,7 +138,7 @@ export const cursor = function (gsapContext) {
         x: xValue,
         y: yValue,
         ease: 'none',
-        duration: delay ? 0.5 : 0,
+        duration: delay ? 0.1 : 0,
         onUpdate: () => {
           cursorXTimeline.progress(progressObject.x);
           cursorYTimeline.progress(progressObject.y);
@@ -143,5 +155,5 @@ export const cursor = function (gsapContext) {
     });
   };
   cursorMove(cursorInner);
-  cursorMove(cursorOuter);
+  cursorMove(cursorOuter, true);
 };

@@ -41,10 +41,14 @@ export const checkBreakpoints = function (item, animationID, gsapContext) {
   const RUN_DESKTOP = `data-ix-${animationID}-desktop`;
   const RUN_TABLET = `data-ix-${animationID}-tablet`;
   const RUN_MOBILE = `data-ix-${animationID}-mobile`;
+  const RUN_ALL = `data-ix-${animationID}-run`;
   //check breakpoints and quit function if set on specific breakpoints
+  runAll = attr(true, item.getAttribute(RUN_ALL));
   runMobile = attr(true, item.getAttribute(RUN_MOBILE));
   runTablet = attr(true, item.getAttribute(RUN_TABLET));
   runDesktop = attr(true, item.getAttribute(RUN_DESKTOP));
+
+  if (runAll === false) return false;
   if (runMobile === false && isMobile) return false;
   if (runTablet === false && isTablet) return false;
   if (runDesktop === false && isDesktop) return false;

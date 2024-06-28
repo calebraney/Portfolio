@@ -5,6 +5,7 @@ import { scrolling } from './interactions/scrolling';
 import { scrollIn } from './interactions/scrollIn';
 import { sectionEdge } from './interactions/sectionEdge';
 import { cursor } from './interactions/cursor';
+import { load } from './interactions/load';
 import { homePitchMarquee } from './pages/home';
 import { contact } from './pages/contact';
 import { blogHeaderBoxes, blogHeaderScroll } from './pages/blog';
@@ -205,6 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
       (gsapContext) => {
         let { isMobile, isTablet, isDesktop, reduceMotion } = gsapContext.conditions;
         // library interactions
+        load(gsapContext);
         if (!reduceMotion) {
           mouseOver(gsapContext);
           scrolling(gsapContext);
@@ -212,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         hoverActive(gsapContext);
         //custom interactions
-        cursor();
+
         buttonHover();
         toggleCTABlocks();
         makeDraggable();
@@ -227,6 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         //globaally run animations on specific breakpoints
         if (isDesktop || isTablet) {
+          cursor(gsapContext);
         }
       }
     );

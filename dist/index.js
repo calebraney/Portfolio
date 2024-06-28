@@ -1046,7 +1046,7 @@
     });
     return typeSplit;
   };
-  var checkBreakpoints2 = function(item, animationID, gsapContext) {
+  var checkBreakpoints = function(item, animationID, gsapContext) {
     if (!item || !animationID || !gsapContext) {
       console.error(`GSAP checkBreakpoints Error in ${animationID}`);
       return;
@@ -1059,9 +1059,12 @@
     const RUN_DESKTOP = `data-ix-${animationID}-desktop`;
     const RUN_TABLET = `data-ix-${animationID}-tablet`;
     const RUN_MOBILE = `data-ix-${animationID}-mobile`;
+    const RUN_ALL = `data-ix-${animationID}-run`;
+    runAll = attr(true, item.getAttribute(RUN_ALL));
     runMobile = attr(true, item.getAttribute(RUN_MOBILE));
     runTablet = attr(true, item.getAttribute(RUN_TABLET));
     runDesktop = attr(true, item.getAttribute(RUN_DESKTOP));
+    if (runAll === false) return false;
     if (runMobile === false && isMobile) return false;
     if (runTablet === false && isTablet) return false;
     if (runDesktop === false && isDesktop) return false;
@@ -1090,7 +1093,7 @@
     mouseOverItems.forEach((mouseOverItem) => {
       const layers = mouseOverItem.querySelectorAll(LAYER);
       if (layers.length === 0) return;
-      let runOnBreakpoint = checkBreakpoints2(mouseOverItem, ANIMATION_ID, gsapContext);
+      let runOnBreakpoint = checkBreakpoints(mouseOverItem, ANIMATION_ID, gsapContext);
       if (runOnBreakpoint === false) return;
       let target = mouseOverItem.querySelector(TARGET);
       if (!target) {
@@ -1160,7 +1163,7 @@
     hoverElements.forEach((item) => {
       if (!item) return;
       let activeClass = attr(ACTIVE_CLASS, item.getAttribute(OPTION_ACTIVE_CLASS));
-      let runOnBreakpoint = checkBreakpoints2(item, ANIMATION_ID, gsapContext);
+      let runOnBreakpoint = checkBreakpoints(item, ANIMATION_ID, gsapContext);
       if (runOnBreakpoint === false) return;
       item.addEventListener("mouseover", function(e2) {
         item.classList.add(activeClass);
@@ -1214,7 +1217,7 @@
       if (!trigger) {
         trigger = scrollingItem;
       }
-      let runOnBreakpoint = checkBreakpoints2(scrollingItem, ANIMATION_ID, gsapContext);
+      let runOnBreakpoint = checkBreakpoints(scrollingItem, ANIMATION_ID, gsapContext);
       if (runOnBreakpoint === false) return;
       let { isMobile, isTablet, isDesktop, reduceMotion } = gsapContext.conditions;
       const tlSettings = {
@@ -1471,7 +1474,7 @@
     const items = gsap.utils.toArray(`[${ELEMENT}]`);
     items.forEach((item) => {
       if (!item) return;
-      let runOnBreakpoint = checkBreakpoints2(item, ANIMATION_ID, gsapContext);
+      let runOnBreakpoint = checkBreakpoints(item, ANIMATION_ID, gsapContext);
       if (runOnBreakpoint === false) return;
       const scrollInType = item.getAttribute(ELEMENT);
       if (scrollInType === HEADING) {
@@ -1575,11 +1578,7 @@
     let runOnBreakpoint = checkBreakpoints(cursorWrap, ANIMATION_ID, gsapContext);
     if (runOnBreakpoint === false) return;
     const cursorHover = function() {
-      const cursorInner2 = document.querySelector('[cursor="inner"]');
-      const cursorOuter2 = document.querySelector('[cursor="outer"]');
-      const cursorWrap2 = document.querySelector('[cursor="component"]');
-      if (!cursorInner2 || !cursorOuter2 || !cursorWrap2) return;
-      const cursorElements = [cursorInner2, cursorOuter2, cursorWrap2];
+      const cursorElements = [cursorInner, cursorOuter, cursorWrap];
       const minorClass = "is-cursor-minor";
       const vanishedClass = "is-vanished";
       const viewPageClass = "is-view-page";
@@ -1617,12 +1616,28 @@
         ".text-style-link, .menu_small-text-link, .cta_block-item, .pitch_image-wrap, .work_arrow-link",
         [minorClass, minorClass]
       );
-      handleMouseEvents('[cursor="minor"]', [minorClass, minorClass]);
-      handleMouseEvents('[cursor="view-page"]', [vanishedClass, viewPageClass, notBlendedClass]);
-      handleMouseEvents('[cursor="view-case"]', [vanishedClass, viewCaseClass, notBlendedClass]);
-      handleMouseEvents('[cursor="lets-go"]', [vanishedClass, letsGoClass, notBlendedClass]);
-      handleMouseEvents('[cursor="image-black"]', [imageBlackClass, minorClass, notBlendedClass]);
-      handleMouseEvents('[cursor="image-white"]', [imageWhiteClass, minorClass, notBlendedClass]);
+      handleMouseEvents('[data-ix-cursor="minor"]', [minorClass, minorClass]);
+      handleMouseEvents('[data-ix-cursor="view-page"]', [
+        vanishedClass,
+        viewPageClass,
+        notBlendedClass
+      ]);
+      handleMouseEvents('[data-ix-cursor="view-case"]', [
+        vanishedClass,
+        viewCaseClass,
+        notBlendedClass
+      ]);
+      handleMouseEvents('[data-ix-cursor="lets-go"]', [vanishedClass, letsGoClass, notBlendedClass]);
+      handleMouseEvents('[data-ix-cursor="image-black"]', [
+        imageBlackClass,
+        minorClass,
+        notBlendedClass
+      ]);
+      handleMouseEvents('[data-ix-cursor="image-white"]', [
+        imageWhiteClass,
+        minorClass,
+        notBlendedClass
+      ]);
       handleMouseEvents(".home-work_item", [blackClass, viewCaseClass, notBlendedClass]);
       handleMouseEvents(".is-next-case", [vanishedClass, nextCaseClass, notBlendedClass]);
       handleMouseEvents(".is-prev-case", [vanishedClass, prevCaseClass, notBlendedClass]);
@@ -1631,6 +1646,7 @@
     cursorHover();
     const cursorMove = function(element, delay = false) {
       let progressObject = { x: 0, y: 0 };
+      console.log(element);
       let cursorXTimeline = gsap.timeline({ paused: true, defaults: { ease: "none" } });
       cursorXTimeline.fromTo(element, { x: "-50vw" }, { x: "50vw" });
       let cursorYTimeline = gsap.timeline({ paused: true, defaults: { ease: "none" } });
@@ -1640,7 +1656,7 @@
           x: xValue,
           y: yValue,
           ease: "none",
-          duration: delay ? 0.5 : 0,
+          duration: delay ? 0.1 : 0,
           onUpdate: () => {
             cursorXTimeline.progress(progressObject.x);
             cursorYTimeline.progress(progressObject.y);
@@ -1654,7 +1670,104 @@
       });
     };
     cursorMove(cursorInner);
-    cursorMove(cursorOuter);
+    cursorMove(cursorOuter, true);
+  };
+
+  // src/interactions/load.js
+  var load = function(gsapContext) {
+    const ANIMATION_ID = "load";
+    const ATTRIBUTE = "data-ix-load";
+    const HEADING = "heading";
+    const ITEM = "item";
+    const IMAGE = "image";
+    const LINE = "line";
+    const STAGGER = "stagger";
+    const STAGGER_SPANS = "stagger-spans";
+    const POSITION = "data-ix-load-position";
+    const DEFAULT_STAGGER = "<0.2";
+    const items = gsap.utils.toArray(`[${ATTRIBUTE}]`);
+    if (items.length === 0) return;
+    const tl = gsap.timeline({
+      paused: true,
+      defaults: {
+        ease: "power1.out",
+        duration: 0.6
+      }
+    });
+    const loadHeading = function(item) {
+      const splitText = runSplit(item);
+      if (!splitText) return;
+      const position = attr("<", item.getAttribute(POSITION));
+      tl.set(item, { opacity: 1 });
+      tl.fromTo(
+        splitText.lines,
+        { opacity: 0, y: "50%", rotateX: 45 },
+        { opacity: 1, y: "0%", rotateX: 0, stagger: { each: 0.1, from: "left" } },
+        position
+      );
+    };
+    const loadStaggerSpans = function(item) {
+      if (!item) return;
+      const children = gsap.utils.toArray(item.children);
+      const position = attr("<", item.getAttribute(POSITION));
+      if (children.length === 0) return;
+      tl.set(item, { opacity: 1 });
+      tl.fromTo(
+        children,
+        { opacity: 0, y: "50%", rotateX: 45 },
+        { opacity: 1, y: "0%", rotateX: 0, stagger: { each: 0.1, from: "left" } },
+        position
+      );
+    };
+    const loadImage = function(item) {
+      const position = attr(DEFAULT_STAGGER, item.getAttribute(POSITION));
+      tl.fromTo(item, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1 }, position);
+    };
+    const loadItem = function(item) {
+      const position = attr(DEFAULT_STAGGER, item.getAttribute(POSITION));
+      tl.fromTo(item, { opacity: 0, y: "2rem" }, { opacity: 1, y: "0rem" }, position);
+    };
+    const loadLine = function(item) {
+      const position = attr(DEFAULT_STAGGER, item.getAttribute(POSITION));
+      tl.fromTo(item, { opacity: 1, width: "0%" }, { opacity: 1, width: "100%" }, position);
+    };
+    const loadStagger = function(item) {
+      if (!item) return;
+      const children = gsap.utils.toArray(item.children);
+      if (children.length === 0) return;
+      children.forEach((child, index) => {
+        if (index === 0) {
+          item.style.opacity = 1;
+        }
+        loadItem(child);
+      });
+    };
+    items.forEach((item) => {
+      if (!item) return;
+      let runOnBreakpoint = checkBreakpoints(item, ANIMATION_ID, gsapContext);
+      if (runOnBreakpoint === false) return;
+      const loadType = item.getAttribute(ATTRIBUTE);
+      if (loadType === HEADING) {
+        loadHeading(item);
+      }
+      if (loadType === STAGGER_SPANS) {
+        loadStaggerSpans(item);
+      }
+      if (loadType === IMAGE) {
+        loadImage(item);
+      }
+      if (loadType === LINE) {
+        loadLine(item);
+      }
+      if (loadType === ITEM) {
+        loadItem(item);
+      }
+      if (loadType === STAGGER) {
+        loadStagger(item);
+      }
+    });
+    tl.play(0);
+    return tl;
   };
 
   // src/pages/home.js
@@ -1987,13 +2100,13 @@
         },
         (gsapContext) => {
           let { isMobile, isTablet, isDesktop, reduceMotion } = gsapContext.conditions;
+          load(gsapContext);
           if (!reduceMotion) {
             mouseOver(gsapContext);
             scrolling(gsapContext);
             scrollIn(gsapContext);
           }
           hoverActive(gsapContext);
-          cursor();
           buttonHover();
           toggleCTABlocks();
           makeDraggable();
@@ -2003,6 +2116,7 @@
           blogHeaderBoxes();
           contact();
           if (isDesktop || isTablet) {
+            cursor(gsapContext);
           }
         }
       );
