@@ -11,7 +11,7 @@ const context = await esbuild.context({
   bundle: true,
   entryPoints: ['src/index.js'],
   outdir: BUILD_DIRECTORY,
-  minify: PRODUCTION,
+  minify: true,
   // sourcemap: !PRODUCTION, //Creates a map of the source files for debugging
   target: PRODUCTION ? 'es2020' : 'esnext',
   inject: LIVE_RELOAD ? ['./bin/live-reload.js'] : undefined,

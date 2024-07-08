@@ -40,6 +40,7 @@ export const cursor = function (gsapContext) {
     const VIEW_PAGE = 'view-page';
     const VIEW_CASE = 'view-case';
     const LETS_GO = 'lets-go';
+    const NEXT_CASE = 'next-case';
     const IMG_WHITE = 'image-white';
     const IMG_BLACK = 'image-black';
     // Cursor Combo Classes
@@ -47,6 +48,10 @@ export const cursor = function (gsapContext) {
     const vanishedClass = 'is-vanished';
     const viewPageClass = 'is-view-page';
     const viewCaseClass = 'is-view-case';
+    const nextCaseClass = 'is-next-case';
+    const prevCaseClass = 'is-prev-case';
+    const nextCaseWhiteClass = 'is-next-case-w';
+    const blackClass = 'is-black';
     const letsGoClass = 'is-lets-go';
     const imageBlackClass = 'is-image-black';
     const imageWhiteClass = 'is-image-white';
@@ -93,6 +98,8 @@ export const cursor = function (gsapContext) {
     handleMouseEvents(IMG_BLACK, [imageBlackClass, minorClass, notBlendedClass]);
     // Cursor scrolls over item with image-white attribute
     handleMouseEvents(IMG_WHITE, [imageWhiteClass, minorClass, notBlendedClass]);
+    handleMouseEvents(NEXT_CASE, [null, nextCaseWhiteClass, , notBlendedClass]);
+
     // // Cursor .is-view-case and .is-black
     // handleMouseEvents('.home-work_item', [blackClass, viewCaseClass, notBlendedClass]);
     // // Cursor .is-next-case global

@@ -57,9 +57,9 @@ export const scrolling = function (gsapContext) {
 
     // default GSAP options for animation
     const tlSettings = {
-      scrub: 0.5,
-      start: 'top bottom',
-      end: 'bottom top',
+      scrub: true,
+      start: 'top 100%',
+      end: 'bottom center',
     };
     // get custom timeline settings or set them at the default
     tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(START));
@@ -85,7 +85,7 @@ export const scrolling = function (gsapContext) {
         start: tlSettings.start,
         end: tlSettings.end,
         scrub: tlSettings.scrub,
-        markers: false,
+        markers: true,
       },
       defaults: {
         duration: 1,
@@ -98,7 +98,7 @@ export const scrolling = function (gsapContext) {
       if (!layer) return;
       //objects for tween
       const varsFrom = {};
-      const varsTo = {};
+      const varsTo = { immediateRender: false };
 
       //function to process data attributes and return the correct value if set.
       const processAttribute = function (attributeName, defaultValue) {
@@ -140,5 +140,6 @@ export const scrolling = function (gsapContext) {
       //add tween
       let fromTween = tl.fromTo(layer, varsFrom, varsTo, position);
     });
+    // console.log(tl);
   });
 };

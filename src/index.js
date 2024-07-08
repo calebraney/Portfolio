@@ -1,4 +1,4 @@
-import Lenis from '@studio-freight/lenis';
+import Lenis from 'lenis';
 import { mouseOver } from './interactions/mouseOver';
 import { hoverActive } from './interactions/hoverActive';
 import { scrolling } from './interactions/scrolling';
@@ -9,7 +9,7 @@ import { load } from './interactions/load';
 import { homePitchMarquee } from './pages/home';
 import { contact } from './pages/contact';
 import { blogHeaderBoxes, blogHeaderScroll } from './pages/blog';
-import { toggleClass, checkBreakpoints } from './utilities';
+import { toggleClass, checkBreakpoints, scrollReset } from './utilities';
 
 document.addEventListener('DOMContentLoaded', function () {
   //document loaded
@@ -42,6 +42,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!ScrollTrigger) return;
     ScrollTrigger.update();
   });
+  gsap.ticker.add((time) => {
+    lenis.raf(time * 1000);
+  });
+  gsap.ticker.lagSmoothing(0);
 
   // allow scrolling on overflow elements
   //document.querySelector('.over--scroll').setAttribute("onwheel", "event.stopPropagation()");
@@ -222,12 +226,51 @@ document.addEventListener('DOMContentLoaded', function () {
           ease: 'power1.out',
         },
       });
-      tl.from(mobile1, { yPercent: 60 }, { yPercent: 0, delay: 1 }, '<');
-      tl.from(mobile2, { yPercent: 40 }, { yPercent: 0 }, '<');
-      tl.from(mobile3, { yPercent: 20 }, { yPercent: 0 }, '<');
+      tl.fromTo(mobile1, { yPercent: 60 }, { yPercent: 0, delay: 1 }, '<');
+      tl.fromTo(mobile2, { yPercent: 40 }, { yPercent: 0 }, '<');
+      tl.fromTo(mobile3, { yPercent: 20 }, { yPercent: 0 }, '<');
       tl.to(mobile1, { yPercent: -20, delay: 2 }, '<');
       tl.to(mobile2, { yPercent: -40 }, '<');
       tl.to(mobile3, { yPercent: -60 }, '<');
+    });
+  };
+
+  const nextCase = function (gsapContext) {
+    //animation ID
+    const ANIMATION_ID = 'data-ix-nextcase';
+    const WRAP = '[data-ix-nextcase="wrap"]';
+    const LINE_1 = '[data-ix-nextcase="line-1"]';
+    const LINE_2 = '[data-ix-nextcase="line-2"]';
+    const OVERLAY = '[data-ix-nextcase="overlay"]';
+    const wraps = gsap.utils.toArray(WRAP);
+    if (wraps.length === 0) return;
+    wraps.forEach((section) => {
+      // check breakpoints and quit function if set on specific breakpoints
+      let runOnBreakpoint = checkBreakpoints(section, ANIMATION_ID, gsapContext);
+      if (runOnBreakpoint === false) return;
+      //get items
+      const line1 = section.querySelector(LINE_1);
+      const line2 = section.querySelector(LINE_2);
+      const overlay = section.querySelector(OVERLAY);
+      if (!line1 || !line2 || !overlay) return;
+      // create timeline
+      const tl = gsap.timeline({
+        paused: true,
+        defaults: {
+          duration: 0.6,
+          ease: 'power1.out',
+        },
+      });
+      tl.fromTo(overlay, { opacity: 0.5 }, { opacity: 1, duration: 0.8 });
+      tl.fromTo(line1, { xPercent: 0 }, { xPercent: 110 }, '<');
+      tl.fromTo(line2, { xPercent: -110 }, { xPercent: 0 }, '<.1');
+      //play interaction on hover
+      section.addEventListener('mouseenter', function (e) {
+        tl.play();
+      });
+      section.addEventListener('mouseleave', function (e) {
+        tl.reverse();
+      });
     });
   };
 
@@ -235,9 +278,14 @@ document.addEventListener('DOMContentLoaded', function () {
   //Control Functions on page load
   pageTransition();
 
+  //refresh scrolltrigger after page load
   window.addEventListener('load', (event) => {
-    console.log('page is fully loaded');
+    ScrollTrigger.refresh(true);
+    // setTimeout(() => {
+    //   console.log('load');
+    // }, 2000);
   });
+
   const gsapInit = function () {
     let mm = gsap.matchMedia();
     mm.add(
@@ -261,6 +309,7 @@ document.addEventListener('DOMContentLoaded', function () {
         //custom interactions
         if (!isMobile || !reduceMotion) {
           caseMobile(gsapContext);
+          nextCase(gsapContext);
         }
         buttonHover();
         toggleCTABlocks();
@@ -282,4 +331,5 @@ document.addEventListener('DOMContentLoaded', function () {
     );
   };
   gsapInit();
+  scrollReset();
 });

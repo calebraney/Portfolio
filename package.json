@@ -19,12 +19,12 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "esbuild": "^0.21.5",
-    "gsap": "^3.12.2",
+    "gsap": "^3.12.5",
     "prettier": "2.8.1",
     "serve": "^14.1.2"
   },
   "dependencies": {
-    "@studio-freight/lenis": "^1.0.42",
+    "lenis": "^1.1.6",
     "split-type": "^0.3.4"
   }
 }
