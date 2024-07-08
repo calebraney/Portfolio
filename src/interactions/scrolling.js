@@ -41,7 +41,7 @@ export const scrolling = function (gsapContext) {
 
   const scrollingItems = gsap.utils.toArray(WRAP);
   scrollingItems.forEach((scrollingItem) => {
-    const layers = scrollingItem.querySelectorAll(LAYER);
+    const layers = gsap.utils.toArray(scrollingItem.querySelectorAll(LAYER));
     // return if items are null
     if (!scrollingItem || layers.length === 0) return;
     // find the target element if one exists, otherwise the parent is the target
@@ -49,6 +49,7 @@ export const scrolling = function (gsapContext) {
     if (!trigger) {
       trigger = scrollingItem;
     }
+
     //check breakpoints and quit function if set on specific breakpoints
     let runOnBreakpoint = checkBreakpoints(scrollingItem, ANIMATION_ID, gsapContext);
     if (runOnBreakpoint === false) return;
@@ -59,7 +60,7 @@ export const scrolling = function (gsapContext) {
     const tlSettings = {
       scrub: true,
       start: 'top 100%',
-      end: 'bottom center',
+      end: 'bottom 0%',
     };
     // get custom timeline settings or set them at the default
     tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(START));

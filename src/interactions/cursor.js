@@ -1,6 +1,6 @@
 import { toggleClass, checkBreakpoints } from '../utilities';
 
-export const cursor = function (gsapContext) {
+export const cursor = function () {
   //animation ID
   const ANIMATION_ID = 'cursor';
   //elements
@@ -20,10 +20,6 @@ export const cursor = function (gsapContext) {
   if (!cursorInner || !cursorOuter || !cursorWrap) return;
   //check if the device has a touch screen
   if ('ontouchstart' in window || navigator.maxTouchPoints) return;
-
-  //check breakpoints and quit function if set on specific breakpoints
-  let runOnBreakpoint = checkBreakpoints(cursorWrap, ANIMATION_ID, gsapContext);
-  if (runOnBreakpoint === false) return;
 
   //rotate the outside of the cursor
   const cursorRotate = function () {};
