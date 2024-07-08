@@ -16,6 +16,7 @@ export const load = function (gsapContext) {
   const ATTRIBUTE = 'data-ix-load';
   // hero animation selectors
   const HEADING = 'heading';
+  const TEXT = 'text';
   const ITEM = 'item';
   const IMAGE = 'image';
   const LINE = 'line';
@@ -48,8 +49,8 @@ export const load = function (gsapContext) {
     tl.set(item, { opacity: 1 });
     tl.fromTo(
       splitText.lines,
-      { opacity: 0, y: '50%', rotateX: 45 },
-      { opacity: 1, y: '0%', rotateX: 0, stagger: { each: 0.1, from: 'left' } },
+      { opacity: 0, y: '50%', rotateX: 45, skewY: -3, skewX: -3 },
+      { opacity: 1, y: '0%', rotateX: 0, skewY: 0, skewX: 0, stagger: { each: 0.1, from: 'left' } },
       position
     );
   };
@@ -65,8 +66,8 @@ export const load = function (gsapContext) {
     tl.set(item, { opacity: 1 });
     tl.fromTo(
       children,
-      { opacity: 0, y: '50%', rotateX: 45 },
-      { opacity: 1, y: '0%', rotateX: 0, stagger: { each: 0.1, from: 'left' } },
+      { opacity: 0, y: '50%', rotateX: 45, skewY: -3, skewX: -3 },
+      { opacity: 1, y: '0%', rotateX: 0, skewY: 0, skewX: 0, stagger: { each: 0.1, from: 'left' } },
       position
     );
   };
@@ -82,6 +83,17 @@ export const load = function (gsapContext) {
     // get the position attribute
     const position = attr(DEFAULT_STAGGER, item.getAttribute(POSITION));
     tl.fromTo(item, { opacity: 0, y: '2rem' }, { opacity: 1, y: '0rem' }, position);
+  };
+  //default load tween
+  const loadText = function (item) {
+    // get the position attribute
+    const position = attr(DEFAULT_STAGGER, item.getAttribute(POSITION));
+    tl.fromTo(
+      item,
+      { opacity: 0, y: '2rem', skewY: -3, skewX: -3 },
+      { opacity: 1, y: '0rem', skewY: 0, skewX: 0 },
+      position
+    );
   };
   //default load tween
   const loadLine = function (item) {
@@ -116,6 +128,9 @@ export const load = function (gsapContext) {
     const loadType = item.getAttribute(ATTRIBUTE);
     if (loadType === HEADING) {
       loadHeading(item);
+    }
+    if (loadType === TEXT) {
+      loadText(item);
     }
     if (loadType === STAGGER_SPANS) {
       loadStaggerSpans(item);

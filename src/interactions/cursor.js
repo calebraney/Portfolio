@@ -25,25 +25,36 @@ export const cursor = function (gsapContext) {
   let runOnBreakpoint = checkBreakpoints(cursorWrap, ANIMATION_ID, gsapContext);
   if (runOnBreakpoint === false) return;
 
+  //rotate the outside of the cursor
+  const cursorRotate = function () {};
+  const tl = gsap.timeline({
+    repeat: -1,
+  });
+  tl.fromTo(cursorOuter, { rotateZ: 0 }, { rotateZ: 360, duration: 7.2, ease: 'none' });
+  cursorRotate();
+
   const cursorHover = function () {
     const cursorElements = [cursorInner, cursorOuter, cursorWrap];
-    // Option classes
+    //attribute cursor types
+    const MINOR = 'minor';
+    const VIEW_PAGE = 'view-page';
+    const VIEW_CASE = 'view-case';
+    const LETS_GO = 'lets-go';
+    const IMG_WHITE = 'image-white';
+    const IMG_BLACK = 'image-black';
+    // Cursor Combo Classes
     const minorClass = 'is-cursor-minor';
     const vanishedClass = 'is-vanished';
     const viewPageClass = 'is-view-page';
     const viewCaseClass = 'is-view-case';
-    const nextCaseClass = 'is-next-case';
-    const prevCaseClass = 'is-prev-case';
     const letsGoClass = 'is-lets-go';
     const imageBlackClass = 'is-image-black';
     const imageWhiteClass = 'is-image-white';
-    const nextCaseWhiteClass = 'is-next-case-w';
     const notBlendedClass = 'is-not-blended';
-    const blackClass = 'is-black';
 
     // Function to handle mouseenter and mouseleave events
     function handleMouseEvents(selector, cursorClasses) {
-      const elements = document.querySelectorAll(selector);
+      const elements = document.querySelectorAll(`[data-ix-cursor="${selector}"]`);
       if (elements.length === 0) return;
       elements.forEach((element) => {
         if (!element) return;
@@ -65,47 +76,31 @@ export const cursor = function (gsapContext) {
     }
 
     // Cursor .is-cursor-minor global
-    handleMouseEvents(
-      '.text-style-link, .menu_small-text-link, .cta_block-item, .pitch_image-wrap, .work_arrow-link',
-      [minorClass, minorClass]
-    );
+    // handleMouseEvents(
+    //   '.text-style-link, .menu_small-text-link, .cta_block-item, .pitch_image-wrap, .work_arrow-link',
+    //   [minorClass, minorClass]
+    // );
 
     // Cursor .is-cursor-minor attribute
-    handleMouseEvents('[data-ix-cursor="minor"]', [minorClass, minorClass]);
+    handleMouseEvents(MINOR, [minorClass, minorClass]);
     // Cursor scrolls over item with view-page attribute
-    handleMouseEvents('[data-ix-cursor="view-page"]', [
-      vanishedClass,
-      viewPageClass,
-      notBlendedClass,
-    ]);
+    handleMouseEvents(VIEW_PAGE, [vanishedClass, viewPageClass, notBlendedClass]);
     // Cursor scrolls over item with view-page attribute
-    handleMouseEvents('[data-ix-cursor="view-case"]', [
-      vanishedClass,
-      viewCaseClass,
-      notBlendedClass,
-    ]);
+    handleMouseEvents(VIEW_CASE, [vanishedClass, viewCaseClass, notBlendedClass]);
     // Cursor scrolls over item with lets-go attribute
-    handleMouseEvents('[data-ix-cursor="lets-go"]', [vanishedClass, letsGoClass, notBlendedClass]);
+    handleMouseEvents(LETS_GO, [vanishedClass, letsGoClass, notBlendedClass]);
     // Cursor scrolls over item with image-black attribute
-    handleMouseEvents('[data-ix-cursor="image-black"]', [
-      imageBlackClass,
-      minorClass,
-      notBlendedClass,
-    ]);
+    handleMouseEvents(IMG_BLACK, [imageBlackClass, minorClass, notBlendedClass]);
     // Cursor scrolls over item with image-white attribute
-    handleMouseEvents('[data-ix-cursor="image-white"]', [
-      imageWhiteClass,
-      minorClass,
-      notBlendedClass,
-    ]);
-    // Cursor .is-view-case and .is-black
-    handleMouseEvents('.home-work_item', [blackClass, viewCaseClass, notBlendedClass]);
-    // Cursor .is-next-case global
-    handleMouseEvents('.is-next-case', [vanishedClass, nextCaseClass, notBlendedClass]);
-    // Cursor .is-prev-case global
-    handleMouseEvents('.is-prev-case', [vanishedClass, prevCaseClass, notBlendedClass]);
-    // Cursor is next case white on case study pages
-    handleMouseEvents('.cs-next_component', [null, nextCaseWhiteClass, , notBlendedClass]);
+    handleMouseEvents(IMG_WHITE, [imageWhiteClass, minorClass, notBlendedClass]);
+    // // Cursor .is-view-case and .is-black
+    // handleMouseEvents('.home-work_item', [blackClass, viewCaseClass, notBlendedClass]);
+    // // Cursor .is-next-case global
+    // handleMouseEvents('.is-next-case', [vanishedClass, nextCaseClass, notBlendedClass]);
+    // // Cursor .is-prev-case global
+    // handleMouseEvents('.is-prev-case', [vanishedClass, prevCaseClass, notBlendedClass]);
+    // // Cursor is next case white on case study pages
+    // handleMouseEvents('.cs-next_component', [null, nextCaseWhiteClass, , notBlendedClass]);
   };
   cursorHover();
 
@@ -122,8 +117,6 @@ export const cursor = function (gsapContext) {
   const cursorMove = function (element, delay = false) {
     // object that stores the value of the progress so it can be animated
     let progressObject = { x: 0, y: 0 };
-    console.log(element);
-
     // Create X timeline
     let cursorXTimeline = gsap.timeline({ paused: true, defaults: { ease: 'none' } });
     cursorXTimeline.fromTo(element, { x: '-50vw' }, { x: '50vw' });

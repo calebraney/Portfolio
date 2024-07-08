@@ -1577,22 +1577,31 @@
     if ("ontouchstart" in window || navigator.maxTouchPoints) return;
     let runOnBreakpoint = checkBreakpoints(cursorWrap, ANIMATION_ID, gsapContext);
     if (runOnBreakpoint === false) return;
+    const cursorRotate = function() {
+    };
+    const tl = gsap.timeline({
+      repeat: -1
+    });
+    tl.fromTo(cursorOuter, { rotateZ: 0 }, { rotateZ: 360, duration: 7.2, ease: "none" });
+    cursorRotate();
     const cursorHover = function() {
       const cursorElements = [cursorInner, cursorOuter, cursorWrap];
+      const MINOR = "minor";
+      const VIEW_PAGE = "view-page";
+      const VIEW_CASE = "view-case";
+      const LETS_GO = "lets-go";
+      const IMG_WHITE = "image-white";
+      const IMG_BLACK = "image-black";
       const minorClass = "is-cursor-minor";
       const vanishedClass = "is-vanished";
       const viewPageClass = "is-view-page";
       const viewCaseClass = "is-view-case";
-      const nextCaseClass = "is-next-case";
-      const prevCaseClass = "is-prev-case";
       const letsGoClass = "is-lets-go";
       const imageBlackClass = "is-image-black";
       const imageWhiteClass = "is-image-white";
-      const nextCaseWhiteClass = "is-next-case-w";
       const notBlendedClass = "is-not-blended";
-      const blackClass = "is-black";
       function handleMouseEvents(selector, cursorClasses) {
-        const elements = document.querySelectorAll(selector);
+        const elements = document.querySelectorAll(`[data-ix-cursor="${selector}"]`);
         if (elements.length === 0) return;
         elements.forEach((element) => {
           if (!element) return;
@@ -1612,41 +1621,16 @@
           });
         });
       }
-      handleMouseEvents(
-        ".text-style-link, .menu_small-text-link, .cta_block-item, .pitch_image-wrap, .work_arrow-link",
-        [minorClass, minorClass]
-      );
-      handleMouseEvents('[data-ix-cursor="minor"]', [minorClass, minorClass]);
-      handleMouseEvents('[data-ix-cursor="view-page"]', [
-        vanishedClass,
-        viewPageClass,
-        notBlendedClass
-      ]);
-      handleMouseEvents('[data-ix-cursor="view-case"]', [
-        vanishedClass,
-        viewCaseClass,
-        notBlendedClass
-      ]);
-      handleMouseEvents('[data-ix-cursor="lets-go"]', [vanishedClass, letsGoClass, notBlendedClass]);
-      handleMouseEvents('[data-ix-cursor="image-black"]', [
-        imageBlackClass,
-        minorClass,
-        notBlendedClass
-      ]);
-      handleMouseEvents('[data-ix-cursor="image-white"]', [
-        imageWhiteClass,
-        minorClass,
-        notBlendedClass
-      ]);
-      handleMouseEvents(".home-work_item", [blackClass, viewCaseClass, notBlendedClass]);
-      handleMouseEvents(".is-next-case", [vanishedClass, nextCaseClass, notBlendedClass]);
-      handleMouseEvents(".is-prev-case", [vanishedClass, prevCaseClass, notBlendedClass]);
-      handleMouseEvents(".cs-next_component", [null, nextCaseWhiteClass, , notBlendedClass]);
+      handleMouseEvents(MINOR, [minorClass, minorClass]);
+      handleMouseEvents(VIEW_PAGE, [vanishedClass, viewPageClass, notBlendedClass]);
+      handleMouseEvents(VIEW_CASE, [vanishedClass, viewCaseClass, notBlendedClass]);
+      handleMouseEvents(LETS_GO, [vanishedClass, letsGoClass, notBlendedClass]);
+      handleMouseEvents(IMG_BLACK, [imageBlackClass, minorClass, notBlendedClass]);
+      handleMouseEvents(IMG_WHITE, [imageWhiteClass, minorClass, notBlendedClass]);
     };
     cursorHover();
     const cursorMove = function(element, delay = false) {
       let progressObject = { x: 0, y: 0 };
-      console.log(element);
       let cursorXTimeline = gsap.timeline({ paused: true, defaults: { ease: "none" } });
       cursorXTimeline.fromTo(element, { x: "-50vw" }, { x: "50vw" });
       let cursorYTimeline = gsap.timeline({ paused: true, defaults: { ease: "none" } });
@@ -1678,6 +1662,7 @@
     const ANIMATION_ID = "load";
     const ATTRIBUTE = "data-ix-load";
     const HEADING = "heading";
+    const TEXT = "text";
     const ITEM = "item";
     const IMAGE = "image";
     const LINE = "line";
@@ -1701,8 +1686,8 @@
       tl.set(item, { opacity: 1 });
       tl.fromTo(
         splitText.lines,
-        { opacity: 0, y: "50%", rotateX: 45 },
-        { opacity: 1, y: "0%", rotateX: 0, stagger: { each: 0.1, from: "left" } },
+        { opacity: 0, y: "50%", rotateX: 45, skewY: -3, skewX: -3 },
+        { opacity: 1, y: "0%", rotateX: 0, skewY: 0, skewX: 0, stagger: { each: 0.1, from: "left" } },
         position
       );
     };
@@ -1714,8 +1699,8 @@
       tl.set(item, { opacity: 1 });
       tl.fromTo(
         children,
-        { opacity: 0, y: "50%", rotateX: 45 },
-        { opacity: 1, y: "0%", rotateX: 0, stagger: { each: 0.1, from: "left" } },
+        { opacity: 0, y: "50%", rotateX: 45, skewY: -3, skewX: -3 },
+        { opacity: 1, y: "0%", rotateX: 0, skewY: 0, skewX: 0, stagger: { each: 0.1, from: "left" } },
         position
       );
     };
@@ -1726,6 +1711,15 @@
     const loadItem = function(item) {
       const position = attr(DEFAULT_STAGGER, item.getAttribute(POSITION));
       tl.fromTo(item, { opacity: 0, y: "2rem" }, { opacity: 1, y: "0rem" }, position);
+    };
+    const loadText = function(item) {
+      const position = attr(DEFAULT_STAGGER, item.getAttribute(POSITION));
+      tl.fromTo(
+        item,
+        { opacity: 0, y: "2rem", skewY: -3, skewX: -3 },
+        { opacity: 1, y: "0rem", skewY: 0, skewX: 0 },
+        position
+      );
     };
     const loadLine = function(item) {
       const position = attr(DEFAULT_STAGGER, item.getAttribute(POSITION));
@@ -1749,6 +1743,9 @@
       const loadType = item.getAttribute(ATTRIBUTE);
       if (loadType === HEADING) {
         loadHeading(item);
+      }
+      if (loadType === TEXT) {
+        loadText(item);
       }
       if (loadType === STAGGER_SPANS) {
         loadStaggerSpans(item);
@@ -2087,7 +2084,44 @@
       if (items.length === 0) return;
       $(selector).draggable();
     }
+    const caseMobile = function(gsapContext) {
+      const ANIMATION_ID = "data-ix-casemobile";
+      const WRAP = '[data-ix-casemobile="wrap"]';
+      const MOBILE_1 = '[data-ix-casemobile="mobile-1"]';
+      const MOBILE_2 = '[data-ix-casemobile="mobile-2"]';
+      const MOBILE_3 = '[data-ix-casemobile="mobile-3"]';
+      const wraps = gsap.utils.toArray(WRAP);
+      if (wraps.length === 0) return;
+      wraps.forEach((section) => {
+        const mobile1 = section.querySelector(MOBILE_1);
+        const mobile2 = section.querySelector(MOBILE_2);
+        const mobile3 = section.querySelector(MOBILE_3);
+        if (!mobile1 || !mobile2 || !mobile3) return;
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.5,
+            markers: true
+          },
+          defaults: {
+            duration: 1,
+            ease: "power1.out"
+          }
+        });
+        tl.from(mobile1, { yPercent: 60 }, { yPercent: 0, delay: 1 }, "<");
+        tl.from(mobile2, { yPercent: 40 }, { yPercent: 0 }, "<");
+        tl.from(mobile3, { yPercent: 20 }, { yPercent: 0 }, "<");
+        tl.to(mobile1, { yPercent: -20, delay: 2 }, "<");
+        tl.to(mobile2, { yPercent: -40 }, "<");
+        tl.to(mobile3, { yPercent: -60 }, "<");
+      });
+    };
     pageTransition();
+    window.addEventListener("load", (event) => {
+      console.log("page is fully loaded");
+    });
     const gsapInit = function() {
       let mm = gsap.matchMedia();
       mm.add(
@@ -2107,6 +2141,9 @@
             scrollIn(gsapContext);
           }
           hoverActive(gsapContext);
+          if (!isMobile || !reduceMotion) {
+            caseMobile(gsapContext);
+          }
           buttonHover();
           toggleCTABlocks();
           makeDraggable();

@@ -9,7 +9,7 @@ import { load } from './interactions/load';
 import { homePitchMarquee } from './pages/home';
 import { contact } from './pages/contact';
 import { blogHeaderBoxes, blogHeaderScroll } from './pages/blog';
-import { toggleClass } from './utilities';
+import { toggleClass, checkBreakpoints } from './utilities';
 
 document.addEventListener('DOMContentLoaded', function () {
   //document loaded
@@ -190,9 +190,54 @@ document.addEventListener('DOMContentLoaded', function () {
     $(selector).draggable();
   }
 
+  const caseMobile = function (gsapContext) {
+    //animation ID
+    const ANIMATION_ID = 'data-ix-casemobile';
+    const WRAP = '[data-ix-casemobile="wrap"]';
+    const MOBILE_1 = '[data-ix-casemobile="mobile-1"]';
+    const MOBILE_2 = '[data-ix-casemobile="mobile-2"]';
+    const MOBILE_3 = '[data-ix-casemobile="mobile-3"]';
+    const wraps = gsap.utils.toArray(WRAP);
+    if (wraps.length === 0) return;
+    wraps.forEach((section) => {
+      //check breakpoints and quit function if set on specific breakpoints
+      // let runOnBreakpoint = checkBreakpoints(section, ANIMATION_ID, gsapContext);
+      // if (runOnBreakpoint === false) return;
+      //get items
+      const mobile1 = section.querySelector(MOBILE_1);
+      const mobile2 = section.querySelector(MOBILE_2);
+      const mobile3 = section.querySelector(MOBILE_3);
+      if (!mobile1 || !mobile2 || !mobile3) return;
+      // create timeline
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 0.5,
+          markers: true,
+        },
+        defaults: {
+          duration: 1,
+          ease: 'power1.out',
+        },
+      });
+      tl.from(mobile1, { yPercent: 60 }, { yPercent: 0, delay: 1 }, '<');
+      tl.from(mobile2, { yPercent: 40 }, { yPercent: 0 }, '<');
+      tl.from(mobile3, { yPercent: 20 }, { yPercent: 0 }, '<');
+      tl.to(mobile1, { yPercent: -20, delay: 2 }, '<');
+      tl.to(mobile2, { yPercent: -40 }, '<');
+      tl.to(mobile3, { yPercent: -60 }, '<');
+    });
+  };
+
   //////////////////////////////
   //Control Functions on page load
   pageTransition();
+
+  window.addEventListener('load', (event) => {
+    console.log('page is fully loaded');
+  });
   const gsapInit = function () {
     let mm = gsap.matchMedia();
     mm.add(
@@ -214,7 +259,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         hoverActive(gsapContext);
         //custom interactions
-
+        if (!isMobile || !reduceMotion) {
+          caseMobile(gsapContext);
+        }
         buttonHover();
         toggleCTABlocks();
         makeDraggable();
