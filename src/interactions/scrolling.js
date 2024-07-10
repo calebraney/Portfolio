@@ -59,24 +59,25 @@ export const scrolling = function (gsapContext) {
     // default GSAP options for animation
     const tlSettings = {
       scrub: true,
-      start: 'top 100%',
-      end: 'bottom 0%',
+      start: 'top bottom',
+      end: 'bottom top',
+      toggleActions: null,
     };
     // get custom timeline settings or set them at the default
     tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(START));
     tlSettings.end = attr(tlSettings.end, scrollingItem.getAttribute(END));
     tlSettings.scrub = attr(tlSettings.scrub, scrollingItem.getAttribute(SCRUB));
     //conditionally update tablet and mobile values
-    if (isTablet && scrollingItem.getAttribute(TABLET_START)) {
+    if (isTablet && scrollingItem.hasAttribute(TABLET_START)) {
       tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(TABLET_START));
     }
-    if (isTablet && scrollingItem.getAttribute(TABLET_END)) {
+    if (isTablet && scrollingItem.hasAttribute(TABLET_END)) {
       tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(TABLET_END));
     }
-    if (isMobile && scrollingItem.getAttribute(MOBILE_START)) {
+    if (isMobile && scrollingItem.hasAttribute(MOBILE_START)) {
       tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(MOBILE_START));
     }
-    if (isMobile && scrollingItem.getAttribute(MOBILE_END)) {
+    if (isMobile && scrollingItem.hasAttribute(MOBILE_END)) {
       tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(MOBILE_END));
     }
     // create timeline
@@ -86,20 +87,24 @@ export const scrolling = function (gsapContext) {
         start: tlSettings.start,
         end: tlSettings.end,
         scrub: tlSettings.scrub,
-        markers: true,
+        markers: false,
+        // onEnter: () => {
+        //   console.log(tl, tl.scrollTrigger.start, tl.scrollTrigger.end);
+        // },
       },
       defaults: {
         duration: 1,
         ease: 'none',
       },
     });
+
     //////////////////////
     // Adding tweens
     layers.forEach((layer) => {
       if (!layer) return;
       //objects for tween
       const varsFrom = {};
-      const varsTo = { immediateRender: false };
+      const varsTo = { immediateRender: true };
 
       //function to process data attributes and return the correct value if set.
       const processAttribute = function (attributeName, defaultValue) {

@@ -48,33 +48,54 @@ document.addEventListener('DOMContentLoaded', function () {
       lenis.raf(time * 1000);
     });
     gsap.ticker.lagSmoothing(0);
+
+    // stop page scrolling
+    function stopScroll() {
+      const stopScrollLinks = document.querySelectorAll('[data-scroll="stop"]');
+      if (stopScrollLinks == null) {
+        return;
+      }
+      stopScrollLinks.forEach((item) => {
+        item.addEventListener('click', (event) => {
+          lenis.stop();
+        });
+      });
+    }
+    stopScroll();
+
+    // start page scrolling
+    function startScroll() {
+      const startScrollLinks = document.querySelectorAll('[data-scroll="start"]');
+      if (startScrollLinks == null) {
+        return;
+      }
+      startScrollLinks.forEach((item) => {
+        item.addEventListener('click', (event) => {
+          lenis.start();
+        });
+      });
+    }
+    startScroll();
+
+    // toggle page scrolling
+    function toggleScroll() {
+      const toggleScrollLinks = document.querySelectorAll('[data-scroll="toggle"]');
+      if (toggleScrollLinks == null) {
+        return;
+      }
+      toggleScrollLinks.forEach((item) => {
+        let stopScroll = false;
+        item.addEventListener('click', (event) => {
+          stopScroll = !stopScroll;
+          if (stopScroll) lenis.stop();
+          else lenis.start();
+        });
+      });
+    }
+    toggleScroll();
   };
   initLenis();
 
-  // allow scrolling on overflow elements
-  //document.querySelector('.over--scroll').setAttribute("onwheel", "event.stopPropagation()");
-
-  const navScroll = function () {
-    // Click Event Listener for Nav Button
-    let secondClick = false;
-    const navButton = document.querySelector('.nav-button_component');
-    if (!navButton) return;
-    navButton.addEventListener('click', () => {
-      secondClick = !secondClick;
-      if (secondClick) stopScroll();
-      else startScroll();
-    });
-  };
-  navScroll();
-
-  // On first click of nav stop scrolling
-  function stopScroll() {
-    lenis.stop();
-  }
-  // On second click of nav start scrolling
-  function startScroll() {
-    lenis.start();
-  }
   // PRE-LOADER CODE
   const pageTransition = function () {
     // Load Animation
@@ -175,49 +196,47 @@ document.addEventListener('DOMContentLoaded', function () {
   //   // }, 2000);
   // });
 
-  const gsapInit = function () {
-    let mm = gsap.matchMedia();
-    mm.add(
-      {
-        //This is the conditions object
-        isMobile: '(max-width: 767px)',
-        isTablet: '(min-width: 768px)  and (max-width: 991px)',
-        isDesktop: '(min-width: 992px)',
-        reduceMotion: '(prefers-reduced-motion: reduce)',
-      },
-      (gsapContext) => {
-        let { isMobile, isTablet, isDesktop, reduceMotion } = gsapContext.conditions;
-        // library interactions
-        load(gsapContext);
-        if (!reduceMotion) {
-          mouseOver(gsapContext);
-          scrolling(gsapContext);
-          scrollIn(gsapContext);
-        }
-        hoverActive(gsapContext);
-        //custom interactions
-        if (!isMobile || !reduceMotion) {
-          caseMobile();
-          nextCase();
-        }
-        toggleCTABlocks();
-        makeDraggable();
-        sectionEdge();
-        //homepage
-        homePitchMarquee();
-        //blog
-        blogHeaderScroll();
-        blogHeaderBoxes();
-        //contact
-        contact();
-
-        //globaally run animations on specific breakpoints
-        if (isDesktop || isTablet) {
-          cursor();
-        }
+  let mm = gsap.matchMedia();
+  mm.add(
+    {
+      //This is the conditions object
+      isMobile: '(max-width: 767px)',
+      isTablet: '(min-width: 768px)  and (max-width: 991px)',
+      isDesktop: '(min-width: 992px)',
+      reduceMotion: '(prefers-reduced-motion: reduce)',
+    },
+    (gsapContext) => {
+      let { isMobile, isTablet, isDesktop, reduceMotion } = gsapContext.conditions;
+      // library interactions
+      load(gsapContext);
+      if (!reduceMotion) {
+        mouseOver(gsapContext);
+        scrolling(gsapContext);
+        scrollIn(gsapContext);
       }
-    );
-  };
-  gsapInit();
+      hoverActive(gsapContext);
+      //custom interactions
+      if (!isMobile || !reduceMotion) {
+        caseMobile();
+        nextCase();
+      }
+      toggleCTABlocks();
+      makeDraggable();
+      sectionEdge();
+      //homepage
+      homePitchMarquee();
+      //blog
+      blogHeaderScroll();
+      blogHeaderBoxes();
+      //contact
+      contact();
+
+      //globaally run animations on specific breakpoints
+      if (isDesktop || isTablet) {
+        cursor();
+      }
+    }
+  );
+
   scrollReset();
 });

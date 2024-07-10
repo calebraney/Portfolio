@@ -13,7 +13,7 @@ export const sectionEdge = function () {
           // trigger element - viewport
           start: 'top bottom',
           end: 'bottom top',
-          scrub: 0.8,
+          scrub: true,
         },
       });
       tl.fromTo(
@@ -43,7 +43,7 @@ export const sectionEdge = function () {
           // trigger element - viewport
           start: 'top bottom',
           end: 'bottom top',
-          scrub: 0.8,
+          scrub: true,
         },
       });
       tl.fromTo(
