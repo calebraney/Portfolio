@@ -14,8 +14,8 @@ export const hoverActive = function (gsapContext) {
     if (!item) return;
     let activeClass = attr(ACTIVE_CLASS, item.getAttribute(OPTION_ACTIVE_CLASS));
     //check breakpoints and quit function if set on specific breakpoints
-    let runOnBreakpoint = checkBreakpoints(item, ANIMATION_ID, gsapContext);
-    if (runOnBreakpoint === false) return;
+    // let runOnBreakpoint = checkBreakpoints(item, ANIMATION_ID, gsapContext);
+    // if (runOnBreakpoint === false) return;
     //add event listener to item
     item.addEventListener('mouseover', function (e) {
       item.classList.add(activeClass);

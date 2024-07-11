@@ -122,8 +122,8 @@ export const load = function (gsapContext) {
   items.forEach((item) => {
     if (!item) return;
     //check breakpoints and quit function if set on specific breakpoints
-    let runOnBreakpoint = checkBreakpoints(item, ANIMATION_ID, gsapContext);
-    if (runOnBreakpoint === false) return;
+    // let runOnBreakpoint = checkBreakpoints(item, ANIMATION_ID, gsapContext);
+    // if (runOnBreakpoint === false) return;
     //find the type of the scrolling animation
     const loadType = item.getAttribute(ATTRIBUTE);
     if (loadType === HEADING) {

@@ -1,13 +1,13 @@
 //////////////////////
 // Blog Interactions
 export const blogHeaderScroll = function () {
-  const section = document.querySelector('.secton-blog-list');
-  const title = document.querySelector('.blog-hero_h1-wrapper');
-  const squares = document.querySelectorAll('.blog-hero_square');
-  if (!section || !title || squares.length === 0) return;
+  const trigger = document.querySelector('[data-ix-bloghero="trigger"]');
+  const title = document.querySelector('[data-ix-bloghero="headings"]');
+  const squares = document.querySelectorAll('[data-ix-bloghero="square"]');
+  if (!trigger || !title || squares.length === 0) return;
   const tl = gsap.timeline({
     scrollTrigger: {
-      trigger: section,
+      trigger: trigger,
       start: 'top bottom',
       end: 'top top',
       scrub: 0.5,
@@ -36,7 +36,7 @@ export const blogHeaderScroll = function () {
 
 //animate boxes
 export const blogHeaderBoxes = function () {
-  const squares = document.querySelectorAll('.blog-hero_square');
+  const squares = document.querySelectorAll('[data-ix-bloghero="square"]');
   if (squares.length === 0) return;
   const tl = gsap.timeline({
     //   yoyo: true,

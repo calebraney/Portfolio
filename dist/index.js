@@ -1190,8 +1190,6 @@
     hoverElements.forEach((item) => {
       if (!item) return;
       let activeClass = attr(ACTIVE_CLASS, item.getAttribute(OPTION_ACTIVE_CLASS));
-      let runOnBreakpoint = checkBreakpoints(item, ANIMATION_ID, gsapContext);
-      if (runOnBreakpoint === false) return;
       item.addEventListener("mouseover", function(e) {
         item.classList.add(activeClass);
       });
@@ -1773,8 +1771,6 @@
     };
     items.forEach((item) => {
       if (!item) return;
-      let runOnBreakpoint = checkBreakpoints(item, ANIMATION_ID, gsapContext);
-      if (runOnBreakpoint === false) return;
       const loadType = item.getAttribute(ATTRIBUTE);
       if (loadType === HEADING) {
         loadHeading(item);
@@ -1912,104 +1908,89 @@
 
   // src/pages/contact.js
   var contact = function() {
-    function animateRadioButtons(event) {
-      const SELECTED_CLASS = "is-selected-item";
-      const input = event.currentTarget;
-      const formGroup = input.closest(".form_group");
-      const selectedLink = input.closest(".form_link");
-      if (!formGroup || !selectedLink) return;
-      const groupLinks = formGroup.querySelectorAll(".form_link");
-      groupLinks.forEach((link) => {
-        const circle = link.querySelector(".form_link-circle");
-        if (link !== selectedLink) {
-          link.classList.remove(SELECTED_CLASS);
-          circle.classList.remove(SELECTED_CLASS);
-        } else {
-          link.classList.add(SELECTED_CLASS);
-          circle.classList.add(SELECTED_CLASS);
-        }
+    const dynamicFormInputs = function() {
+      const inputWraps = gsap.utils.toArray(".form_dynamic_field_wrap");
+      const FIELD = ".form_dynamic_field";
+      const LABEL = ".form_dynamic_label";
+      const PLACEHOLDER_CLASS = "is-placeholder";
+      if (inputWraps.length === 0) return;
+      inputWraps.forEach(function(item) {
+        const field = item.querySelector(FIELD);
+        const label = item.querySelector(LABEL);
+        if (!field || !label) return;
+        field.addEventListener("focusin", function() {
+          label.classList.remove(PLACEHOLDER_CLASS);
+        });
+        field.addEventListener("focusout", function() {
+          if (field.value.length === 0) {
+            label.classList.add(PLACEHOLDER_CLASS);
+          }
+        });
+        field.addEventListener("change", function() {
+          if (field.value.length !== 0) {
+            label.classList.remove(PLACEHOLDER_CLASS);
+          } else {
+            label.classList.add(PLACEHOLDER_CLASS);
+          }
+        });
+      });
+    };
+    dynamicFormInputs();
+    function optionFieldFocus(event) {
+      const ACTIVE_CLASS = "is-active";
+      const OPTION_FIELD = ".form_option_input";
+      const OPTION_WRAP = ".form_option_wrap";
+      const GROUP_WRAP = ".form_option_list";
+      const optionFields = document.querySelectorAll(OPTION_FIELD);
+      if (optionFields.length === 0) return;
+      optionFields.forEach(function(formField) {
+        const fieldParent = formField.closest(OPTION_WRAP);
+        const fieldGroup = formField.closest(GROUP_WRAP);
+        formField.addEventListener("change", function(event2) {
+          const radioGroup = fieldGroup.querySelectorAll(OPTION_FIELD);
+          if (formField.type === "checkbox" && formField.checked === true) {
+            fieldParent.classList.add(ACTIVE_CLASS);
+          }
+          if (formField.type === "checkbox" && formField.checked === false) {
+            fieldParent.classList.remove(ACTIVE_CLASS);
+          }
+          if (formField.type === "radio" && formField.checked === true) {
+            radioGroup.forEach(function(field) {
+              const fieldParent2 = field.closest(OPTION_WRAP);
+              if (field !== formField) {
+                fieldParent2.classList.remove(ACTIVE_CLASS);
+              } else {
+                fieldParent2.classList.add(ACTIVE_CLASS);
+              }
+            });
+          }
+        });
       });
     }
-    document.querySelectorAll(".is-options .form_link input").forEach(function(input) {
-      input.addEventListener("change", animateRadioButtons);
-    });
-    function animateCheckboxes(event) {
-      const SELECTED_CLASS = "is-selected-item";
-      const input = event.currentTarget;
-      const formLink = input.closest(".form_link");
-      if (!input || !formLink) return;
-      const formLinkCircle = formLink.querySelector(".form_link-circle");
-      if (!formLinkCircle) return;
-      if (input.checked === true) {
-        formLink.classList.add(SELECTED_CLASS);
-        formLinkCircle.classList.add(SELECTED_CLASS);
-      } else {
-        formLink.classList.remove(SELECTED_CLASS);
-        formLinkCircle.classList.remove(SELECTED_CLASS);
-      }
+    optionFieldFocus();
+    function dynamicFieldFocus(event) {
+      const dyamicFields = document.querySelectorAll(".form_dynamic_field");
+      if (dyamicFields.length === 0) return;
+      dyamicFields.forEach(function(formField) {
+        formField.addEventListener("focus", function(event2) {
+          const formFieldParent = event2.currentTarget.closest(".form_dynamic_field_wrap");
+          if (!formFieldParent) return;
+          formFieldParent.querySelector(".form_dynamic_field_line").click();
+        });
+      });
     }
-    document.querySelectorAll(".is-checkbox .form_link input").forEach(function(input) {
-      input.addEventListener("change", animateCheckboxes);
-    });
-    function handleFormFieldFocus(event) {
-      const formFieldParent = event.currentTarget.closest(".form_field-parent");
-      if (!formFieldParent) return;
-      formFieldParent.querySelector(".form_field-line").click();
-    }
-    document.querySelectorAll(".form_field").forEach(function(formField) {
-      formField.addEventListener("focus", handleFormFieldFocus);
-    });
-    function handleFormFieldChange(event) {
-      const formField = event.currentTarget;
-      const formFieldParent = formField.closest(".form_field-parent");
-      if (!formFieldParent) return;
-      const formFieldLine = formFieldParent.querySelector(".form_field-line");
-      if (!formFieldLine) return;
-      if (formField.value.length > 0) {
-        formFieldLine.classList.add("is-full-opacity");
-      } else {
-        formFieldLine.classList.remove("is-full-opacity");
-      }
-    }
-    document.querySelectorAll(".form_field").forEach(function(formField) {
-      formField.addEventListener("change", handleFormFieldChange);
-    });
-    function enableSubmitButton() {
-      const yourNameInput = document.querySelector(".is-your-name");
-      const yourEmailInput = document.querySelector(".is-your-email");
-      const submitButtonContainer = document.querySelector(".form_link_container.is-submit");
-      if (!yourNameInput || !yourEmailInput || !submitButtonContainer) return;
-      if (yourNameInput.value.length && yourEmailInput.value.length) {
-        submitButtonContainer.classList.remove("is-disable");
-      } else {
-        submitButtonContainer.classList.add("is-disable");
-      }
-    }
-    document.querySelectorAll(".is-your-name, .is-your-email").forEach(function(input) {
-      input.addEventListener("keyup", enableSubmitButton);
-    });
-    function handleCursorHover(event) {
-      const cursorInner = document.querySelector(".cursor_inner");
-      const cursorOuter = document.querySelector(".cursor_outer");
-      if (!cursorInner || !cursorOuter) return;
-      cursorInner.classList.toggle("is-cursor-minor");
-      cursorOuter.classList.toggle("is-cursor-minor");
-    }
-    document.querySelectorAll(".form_field, .form_link, .text-style-link").forEach(function(element) {
-      element.addEventListener("mouseenter", handleCursorHover);
-      element.addEventListener("mouseleave", handleCursorHover);
-    });
+    dynamicFieldFocus();
   };
 
   // src/pages/blog.js
   var blogHeaderScroll = function() {
-    const section = document.querySelector(".secton-blog-list");
-    const title = document.querySelector(".blog-hero_h1-wrapper");
-    const squares = document.querySelectorAll(".blog-hero_square");
-    if (!section || !title || squares.length === 0) return;
+    const trigger = document.querySelector('[data-ix-bloghero="trigger"]');
+    const title = document.querySelector('[data-ix-bloghero="headings"]');
+    const squares = document.querySelectorAll('[data-ix-bloghero="square"]');
+    if (!trigger || !title || squares.length === 0) return;
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: section,
+        trigger,
         start: "top bottom",
         end: "top top",
         scrub: 0.5
@@ -2036,7 +2017,7 @@
     );
   };
   var blogHeaderBoxes = function() {
-    const squares = document.querySelectorAll(".blog-hero_square");
+    const squares = document.querySelectorAll('[data-ix-bloghero="square"]');
     if (squares.length === 0) return;
     const tl = gsap.timeline({
       //   yoyo: true,
@@ -2058,6 +2039,7 @@
 
   // src/index.js
   document.addEventListener("DOMContentLoaded", function() {
+    let lenis, clickAnimation;
     if (gsap.ScrollTrigger !== void 0) {
       gsap.registerPlugin(ScrollTrigger);
     }
@@ -2065,23 +2047,23 @@
       gsap.registerPlugin(Flip);
     }
     const initLenis = function() {
-      const lenis2 = new Lenis({
+      lenis = new Lenis({
         duration: 0.8,
         easing: (t2) => t2 === 1 ? 1 : 1 - Math.pow(2, -10 * t2),
         // https://easings.net
         touchMultiplier: 1.5
       });
       function raf(time) {
-        lenis2.raf(time);
+        lenis.raf(time);
         requestAnimationFrame(raf);
       }
       requestAnimationFrame(raf);
-      lenis2.on("scroll", () => {
+      lenis.on("scroll", () => {
         if (!ScrollTrigger) return;
         ScrollTrigger.update();
       });
       gsap.ticker.add((time) => {
-        lenis2.raf(time * 1e3);
+        lenis.raf(time * 1e3);
       });
       gsap.ticker.lagSmoothing(0);
       function stopScroll() {
@@ -2091,7 +2073,7 @@
         }
         stopScrollLinks.forEach((item) => {
           item.addEventListener("click", (event) => {
-            lenis2.stop();
+            lenis.stop();
           });
         });
       }
@@ -2103,7 +2085,7 @@
         }
         startScrollLinks.forEach((item) => {
           item.addEventListener("click", (event) => {
-            lenis2.start();
+            lenis.start();
           });
         });
       }
@@ -2117,39 +2099,98 @@
           let stopScroll2 = false;
           item.addEventListener("click", (event) => {
             stopScroll2 = !stopScroll2;
-            if (stopScroll2) lenis2.stop();
-            else lenis2.start();
+            if (stopScroll2) lenis.stop();
+            else lenis.start();
           });
         });
       }
       toggleScroll();
     };
     initLenis();
-    const pageTransition = function() {
-      const component = document.querySelector(".transition");
-      const transitionTrigger = document.querySelector(".transition-trigger");
-      let introDurationMS = 1600;
-      let exitDurationMS = 1800;
+    const pageTransition = function(gsapContext) {
+      const wrap = document.querySelector(".transition_wrap");
+      const edgeTop = document.querySelector(".transition_edge_top_image");
+      const edgeBot = document.querySelector(".transition_edge_bot_image");
+      const imageTop = document.querySelector(".transition_image_top");
+      const imageBot = document.querySelector(".transition_image_bot");
       let excludedClass = "no-transition";
-      if (transitionTrigger) {
-        transitionTrigger.click();
+      if (!wrap) return;
+      const tlLoad = gsap.timeline({
+        // paused: true,
+        defaults: {
+          ease: "power1,out",
+          duration: 0.6
+        }
+      });
+      tlLoad.set(wrap, { display: "block" });
+      tlLoad.fromTo(imageTop, { opacity: 1 }, { opacity: 0, delay: 0.5, duration: 0.3 });
+      tlLoad.fromTo(imageBot, { opacity: 1 }, { opacity: 0, duration: 0.3 }, "<");
+      tlLoad.fromTo(
+        imageTop,
+        { yPercent: 0, rotateX: 0, skewX: 0, skewY: 0 },
+        { yPercent: -110, rotateX: 90, skewX: -12, skewY: -15 },
+        "<"
+      );
+      tlLoad.fromTo(
+        imageBot,
+        { yPercent: 0, rotateX: 0, skewX: 0, skewY: 0 },
+        { yPercent: -110, rotateX: 90, skewX: -12, skewY: -15 },
+        "<.1"
+      );
+      tlLoad.fromTo(wrap, { yPercent: 0 }, { yPercent: -110, duration: 0.8 }, "<.2");
+      tlLoad.fromTo(edgeBot, { height: "100%" }, { height: "0%", duration: 0.6 }, "<.2");
+      tlLoad.set(wrap, { display: "none" });
+      const introDuration = tlLoad.duration() * 1e3;
+      const clickTimeline = function() {
+        const tlClick = gsap.timeline({
+          paused: true,
+          defaults: {
+            ease: "power1,out",
+            duration: 0.6
+          }
+        });
+        tlClick.set(wrap, { display: "flex" });
+        tlClick.fromTo(wrap, { yPercent: 110, duration: 0.8 }, { yPercent: 0, duration: 0.8 });
+        tlClick.fromTo(edgeTop, { height: "100%" }, { height: "0%", duration: 0.6 }, "<.2");
+        tlClick.fromTo(imageTop, { opacity: 0 }, { opacity: 1, duration: 0.3 }, "<.4");
+        tlClick.fromTo(
+          imageTop,
+          { yPercent: 110, rotateX: -90, skewX: 6, skewY: 10 },
+          { yPercent: 0, rotateX: 0, skewX: 0, skewY: 0 },
+          "<"
+        );
+        tlClick.fromTo(imageBot, { opacity: 0 }, { opacity: 1, duration: 0.3 }, "<.1");
+        tlClick.fromTo(
+          imageBot,
+          { yPercent: 110, rotateX: -90, skewX: 6, skewY: 10 },
+          { yPercent: 0, rotateX: 0, skewX: 0, skewY: 0 },
+          "<"
+        );
+        return tlClick;
+      };
+      if (wrap) {
+        tlLoad.play();
         document.body.classList.add("no-scroll-transition");
         lenis.stop();
         setTimeout(() => {
           document.body.classList.remove("no-scroll-transition");
           lenis.start();
-        }, introDurationMS);
+          load(gsapContext);
+          tlLoad.kill();
+          clickAnimation = clickTimeline();
+        }, introDuration);
       }
       document.querySelectorAll("a").forEach(function(link) {
         link.addEventListener("click", function(e) {
-          if (this.hostname == window.location.hostname && this.getAttribute("href").indexOf("#") === -1 && !this.classList.contains(excludedClass) && this.getAttribute("target") !== "_blank" && transitionTrigger) {
+          if (this.hostname == window.location.hostname && this.getAttribute("href").indexOf("#") === -1 && !this.classList.contains(excludedClass) && this.getAttribute("target") !== "_blank" && wrap) {
             e.preventDefault();
             document.body.classList.add("no-scroll-transition");
             let transitionURL = this.getAttribute("href");
-            transitionTrigger.click();
+            clickAnimation.play();
+            const exitDuration = clickAnimation.duration() * 1e3 + 100;
             setTimeout(() => {
               window.location.href = transitionURL;
-            }, exitDurationMS);
+            }, exitDuration);
           }
         });
       });
@@ -2161,13 +2202,13 @@
       setTimeout(() => {
         window.addEventListener("resize", function() {
           setTimeout(() => {
-            component.style.display = "none";
+            wrap.style.display = "none";
           }, 50);
         });
-      }, introDurationMS);
+      }, introDuration);
     };
     const toggleCTABlocks = function(event) {
-      const ctaBlocks = document.querySelectorAll(".cta_block-item");
+      const ctaBlocks = document.querySelectorAll(".cta_block_item");
       const activeClass = "is-clicked";
       if (ctaBlocks.length === 0) return;
       ctaBlocks.forEach((item) => {
@@ -2177,12 +2218,6 @@
         });
       });
     };
-    function makeDraggable() {
-      const selector = ".cta_block-item, .is-draggable";
-      const items = document.querySelectorAll(selector);
-      if (items.length === 0) return;
-      $(selector).draggable();
-    }
     pageTransition();
     let mm = gsap.matchMedia();
     mm.add(
@@ -2195,24 +2230,23 @@
       },
       (gsapContext) => {
         let { isMobile, isTablet, isDesktop, reduceMotion } = gsapContext.conditions;
-        load(gsapContext);
+        pageTransition(gsapContext);
         if (!reduceMotion) {
           mouseOver(gsapContext);
           scrolling(gsapContext);
           scrollIn(gsapContext);
+          homePitchMarquee();
+          blogHeaderScroll();
+          blogHeaderBoxes();
         }
         hoverActive(gsapContext);
+        sectionEdge();
+        contact();
         if (!isMobile || !reduceMotion) {
           caseMobile();
           nextCase();
+          toggleCTABlocks();
         }
-        toggleCTABlocks();
-        makeDraggable();
-        sectionEdge();
-        homePitchMarquee();
-        blogHeaderScroll();
-        blogHeaderBoxes();
-        contact();
         if (isDesktop || isTablet) {
           cursor();
         }
