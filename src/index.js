@@ -6,11 +6,11 @@ import { scrollIn } from './interactions/scrollIn';
 import { sectionEdge } from './interactions/sectionEdge';
 import { cursor } from './interactions/cursor';
 import { load } from './interactions/load';
-import { homePitchMarquee, homeWorkHover } from './pages/home';
+import { homePitchMarquee, homeWorkHover, homeHeroCircles } from './pages/home';
 import { caseMobile, nextCase } from './pages/case';
 import { contact } from './pages/contact';
 import { blogHeaderBoxes, blogHeaderScroll } from './pages/blog';
-import { toggleClass, checkBreakpoints, scrollReset } from './utilities';
+import { toggleClass, checkBreakpoints, scrollReset, runSplit } from './utilities';
 
 document.addEventListener('DOMContentLoaded', function () {
   //Global Scope Variables
@@ -225,6 +225,177 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   //NAV CODE
+  const navMenu = function (gsapContext) {
+    //settings
+    let navOpen = false;
+    //Elements
+    const PRIMARY_LINK = '[data-ix-menu="primary-link"]';
+    const PRIMARY_NUMBER = '[data-ix-menu="primary-number"]';
+    const PRIMARY_1 = '[data-ix-menu="primary-1"]';
+    const PRIMARY_2 = '[data-ix-menu="primary-2"]';
+
+    const button = document.querySelector('[data-ix-menu="button"]');
+    const buttonBg = document.querySelector('[data-ix-menu="button-bg"]');
+    const buttonLine1 = document.querySelector('[data-ix-menu="button-line-1"]');
+    const buttonLine2 = document.querySelector('[data-ix-menu="button-line-2"]');
+    const buttonLine3 = document.querySelector('[data-ix-menu="button-line-3"]');
+    const buttonLine4 = document.querySelector('[data-ix-menu="button-line-4"]');
+
+    const wrap = document.querySelector('[data-ix-menu="wrap"]');
+    const edge = document.querySelector('[data-ix-menu="edge"]');
+    const right = document.querySelector('[data-ix-menu="right"]');
+    const rightContent = document.querySelector('[data-ix-menu="right-content"]');
+    const rightBg = document.querySelector('[data-ix-menu="right-bg"]');
+    const rightCircle = document.querySelector('[data-ix-menu="right-circle"]');
+    const leftLines = document.querySelector('[data-ix-menu="left-lines"]');
+    if (!wrap) return;
+    const primaryLinks = gsap.utils.toArray(PRIMARY_LINK);
+
+    const showMenuTL = gsap.timeline({
+      paused: true,
+      defaults: {
+        ease: 'power2,out',
+        duration: 0.8,
+      },
+    });
+    //Menu comes down
+    showMenuTL.set(wrap, { display: 'flex' });
+    showMenuTL.fromTo(wrap, { yPercent: -110 }, { yPercent: 0, duration: 1 });
+    showMenuTL.fromTo(edge, { height: '100%' }, { height: '0%' }, '<');
+    //elements animate in
+    showMenuTL.fromTo(right, { opacity: 0 }, { opacity: 1, duration: 0.3 }, '-=.2');
+    showMenuTL.fromTo(right, { xPercent: 110 }, { xPercent: 0 }, '<');
+    showMenuTL.fromTo(rightCircle, { width: '0%' }, { width: '100%' }, '<');
+    showMenuTL.fromTo(
+      primaryLinks,
+      { yPercent: 50, opacity: 0, rotateX: -45 },
+      { yPercent: 0, opacity: 1, rotateX: 0, stagger: { from: 'end', each: 0.1 } },
+      '<'
+    );
+    showMenuTL.fromTo(rightContent, { opacity: 0 }, { opacity: 1, duration: 0.4 }, '<.4');
+    showMenuTL.fromTo(
+      leftLines,
+      { opacity: 0, xPercent: -50 },
+      { opacity: 1, xPercent: 0, duration: 0.3 },
+      '<'
+    );
+    //button click timeline
+    const buttonClickTL = gsap.timeline({
+      paused: true,
+      defaults: {
+        ease: 'expo.inOut',
+        duration: 0.6,
+      },
+    });
+    buttonClickTL.set(buttonLine3, { display: 'block' });
+    buttonClickTL.set(buttonLine4, { display: 'block' });
+    buttonClickTL.fromTo(buttonLine1, { x: '0rem' }, { x: '2rem' });
+    buttonClickTL.fromTo(buttonLine2, { x: '0rem' }, { x: '-2rem' }, '<');
+    buttonClickTL.fromTo(
+      buttonLine3,
+      { x: '-2rem', y: '-2rem', rotateZ: 45 },
+      { x: '0rem', y: '0rem', rotateZ: 45 }
+    );
+    buttonClickTL.fromTo(
+      buttonLine4,
+      { x: '2rem', y: '-2rem', rotateZ: -45 },
+      { x: '0rem', y: '0rem', rotateZ: -45 },
+      '<.1'
+    );
+    //hover timeline
+    const buttonHoverTL = gsap.timeline({
+      paused: true,
+      defaults: {
+        ease: 'power2.out',
+        duration: 0.3,
+      },
+    });
+    buttonHoverTL.fromTo(buttonBg, { width: '100%' }, { width: '2.5rem' });
+    buttonHoverTL.fromTo(buttonLine1, { width: '1rem' }, { width: '1.25rem' }, '<');
+    buttonHoverTL.fromTo(buttonLine2, { width: '1.5rem' }, { width: '1rem' }, '<');
+
+    //Click Timelines
+    button.addEventListener('click', function (e) {
+      if (navOpen) {
+        showMenuTL.timeScale(1.75);
+        showMenuTL.reverse();
+        buttonClickTL.reverse();
+      } else {
+        showMenuTL.timeScale(1);
+        showMenuTL.play();
+        buttonClickTL.play();
+      }
+      navOpen = !navOpen;
+    });
+    //Hover Timelines
+    button.addEventListener('mouseenter', function (e) {
+      buttonHoverTL.play();
+    });
+    button.addEventListener('mouseleave', function (e) {
+      buttonHoverTL.reverse();
+    });
+
+    primaryLinks.forEach((link) => {
+      //split the text
+      const number = link.querySelector(PRIMARY_NUMBER);
+      const back = link.querySelector(PRIMARY_2);
+      const frontText = runSplit(link.querySelector(PRIMARY_1), 'lines, chars');
+      const backText = runSplit(back, 'lines, chars');
+
+      if (!frontText || !backText) return;
+      //set heading to full opacity (check to see if needed)
+      // item.style.opacity = 1;
+      const linksTl = gsap.timeline({
+        paused: true,
+        defaults: {
+          ease: 'expo.inOut',
+          duration: 0.8,
+        },
+      });
+      linksTl.set(back, {
+        opacity: 1,
+      });
+      linksTl.fromTo(
+        frontText.chars,
+        {
+          yPercent: 0,
+          opacity: 1,
+          rotateX: 0,
+        },
+        {
+          yPercent: -120,
+          opacity: 0,
+          rotateX: 90,
+          stagger: { from: 'start', each: 0.05 },
+        },
+        '<'
+      );
+      linksTl.from(
+        backText.chars,
+        {
+          yPercent: 120,
+          opacity: 0,
+          rotateX: -90,
+          stagger: { from: 'start', each: 0.05 },
+        },
+        {
+          yPercent: 0,
+          opacity: 1,
+          rotateX: 0,
+        },
+        '<'
+      );
+      //Hover Timelines
+      link.addEventListener('mouseenter', function (e) {
+        linksTl.play();
+        number.setAttribute('data-theme', 'dark');
+      });
+      link.addEventListener('mouseleave', function (e) {
+        linksTl.reverse();
+        number.setAttribute('data-theme', 'light');
+      });
+    });
+  };
   //Adds overflow hidden to the body on menu open
   // $('.nav-button_component').on('click', function () {
   //   $('body').toggleClass('overflow-hidden');
@@ -293,9 +464,11 @@ document.addEventListener('DOMContentLoaded', function () {
         blogHeaderScroll();
         blogHeaderBoxes();
       }
+      navMenu(gsapContext);
       hoverActive(gsapContext);
       sectionEdge();
       contact();
+      homeHeroCircles();
       if (!isMobile) {
         homeWorkHover();
       }

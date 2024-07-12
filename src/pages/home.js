@@ -85,3 +85,24 @@ export const homeWorkHover = function () {
     });
   });
 };
+
+export const homeHeroCircles = function () {
+  //selectors
+  const CIRCLE_1 = '[data-ix-homehero="circle-1"]';
+  const CIRCLE_2 = '[data-ix-homehero="circle-2"]';
+  //items
+  const circle1 = document.querySelector(CIRCLE_1);
+  const circle2 = document.querySelector(CIRCLE_2);
+  if (!circle1 || !circle2) return;
+  //first circle timeline
+  const tl1 = gsap.timeline({
+    repeat: -1,
+  });
+  tl1.fromTo(circle1, { rotateZ: 0 }, { rotateZ: 360, ease: 'none', duration: 20 });
+
+  //second circle timeline
+  const tl2 = gsap.timeline({
+    repeat: -1,
+  });
+  tl2.fromTo(circle2, { rotateZ: 0 }, { rotateZ: -360, ease: 'none', duration: 32 });
+};
