@@ -1134,16 +1134,27 @@
         let cursorXTimeline = gsap.timeline({ paused: true, defaults: { ease: "none" } });
         let cursorYTimeline = gsap.timeline({ paused: true, defaults: { ease: "none" } });
         layers.forEach((layer) => {
-          let moveX = attr(10, layer.getAttribute(MOVE_X));
-          let moveY = attr(10, layer.getAttribute(MOVE_Y));
-          let rotateZ = attr(0, layer.getAttribute(ROTATE_Z));
-          cursorXTimeline.fromTo(
-            layer,
-            { xPercent: moveX * -1, rotateZ: rotateZ * -1 },
-            { xPercent: moveX, rotateZ },
-            0
-          );
-          cursorYTimeline.fromTo(layer, { yPercent: moveY * -1 }, { yPercent: moveY }, 0);
+          const processAttribute = function(attributeName, defaultValue) {
+            const hasAttribute = layer.hasAttribute(attributeName);
+            const attributeValue = attr(defaultValue, layer.getAttribute(attributeName));
+            if (hasAttribute) {
+              return attributeValue;
+            } else {
+              return;
+            }
+          };
+          let moveX = processAttribute(MOVE_X, 10);
+          let moveY = processAttribute(MOVE_Y, 10);
+          let rotateZ = processAttribute(ROTATE_Z, 5);
+          if (moveX) {
+            cursorXTimeline.fromTo(layer, { xPercent: moveX * -1 }, { xPercent: moveX }, 0);
+          }
+          if (rotateZ) {
+            cursorXTimeline.fromTo(layer, { rotateZ: rotateZ * -1 }, { rotateZ }, 0);
+          }
+          if (moveY) {
+            cursorYTimeline.fromTo(layer, { yPercent: moveY * -1 }, { yPercent: moveY }, 0);
+          }
         });
         function setTimelineProgress(xValue, yValue) {
           gsap.to(progressObject, {
@@ -1838,6 +1849,45 @@
     }
     pitchSliderIn();
   };
+  var homeWorkHover = function() {
+    const ITEM = ".home_work_item-link";
+    const LEFT = ".home_work_left";
+    const RIGHT = ".home_work_right";
+    const BG = ".home_work_background";
+    const VISUAL = ".home_work_visual_wrap";
+    const NUMBER_FIRST = ".home_work_number_span.is-one";
+    const NUMBER_SECOND = ".home_work_number_span.is-two";
+    const items = gsap.utils.toArray(ITEM);
+    if (items.length === 0) return;
+    items.forEach((item) => {
+      const left = item.querySelector(LEFT);
+      const right = item.querySelector(RIGHT);
+      const bg = item.querySelector(BG);
+      const visual = item.querySelector(VISUAL);
+      const numberFirst = item.querySelectorAll(NUMBER_FIRST);
+      const numberSecond = item.querySelectorAll(NUMBER_SECOND);
+      const tl = gsap.timeline({
+        paused: true,
+        defaults: {
+          ease: "power2.out",
+          duration: 0.8
+        }
+      });
+      tl.fromTo(visual, { yPercent: 50, scaleY: 1.2 }, { yPercent: 0, scaleY: 1 });
+      tl.fromTo(bg, { height: "0%" }, { height: "100%", duration: 0.6, ease: "power1.out" }, "<");
+      tl.fromTo(left, { x: "0rem" }, { x: "3rem" }, "<");
+      tl.fromTo(right, { x: "0rem" }, { x: "-3rem" }, "<");
+      tl.fromTo(numberFirst, { yPercent: 0 }, { yPercent: -110, stagger: 0.1, duration: 0.4 }, "<.1");
+      tl.fromTo(visual, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, "<");
+      tl.fromTo(numberSecond, { yPercent: 110 }, { yPercent: 0, stagger: 0.1, duration: 0.4 }, "<.2");
+      item.addEventListener("mouseenter", function(e) {
+        tl.play();
+      });
+      item.addEventListener("mouseleave", function(e) {
+        tl.reverse();
+      });
+    });
+  };
 
   // src/pages/case.js
   var caseMobile = function() {
@@ -2242,6 +2292,9 @@
         hoverActive(gsapContext);
         sectionEdge();
         contact();
+        if (!isMobile) {
+          homeWorkHover();
+        }
         if (!isMobile || !reduceMotion) {
           caseMobile();
           nextCase();

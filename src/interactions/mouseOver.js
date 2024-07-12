@@ -51,19 +51,33 @@ export const mouseOver = function (gsapContext) {
       //////////////////////
       // Adding tweens
       layers.forEach((layer) => {
+        //function to process data attributes and return the correct value if set.
+        const processAttribute = function (attributeName, defaultValue) {
+          const hasAttribute = layer.hasAttribute(attributeName);
+          const attributeValue = attr(defaultValue, layer.getAttribute(attributeName));
+          // if the attribute has the default value return the attribute value
+          // (alternatively, could just include the default value)
+          if (hasAttribute) {
+            return attributeValue;
+          } else {
+            return;
+          }
+        };
+        //add properties to vars objects
         // get custom move amounts or set them at the default of 10%
-        let moveX = attr(10, layer.getAttribute(MOVE_X));
-        let moveY = attr(10, layer.getAttribute(MOVE_Y));
-        let rotateZ = attr(0, layer.getAttribute(ROTATE_Z));
+        let moveX = processAttribute(MOVE_X, 10);
+        let moveY = processAttribute(MOVE_Y, 10);
+        let rotateZ = processAttribute(ROTATE_Z, 5);
         // horizontal timeline
-        cursorXTimeline.fromTo(
-          layer,
-          { xPercent: moveX * -1, rotateZ: rotateZ * -1 },
-          { xPercent: moveX, rotateZ: rotateZ },
-          0
-        );
-        //vertical timeline
-        cursorYTimeline.fromTo(layer, { yPercent: moveY * -1 }, { yPercent: moveY }, 0);
+        if (moveX) {
+          cursorXTimeline.fromTo(layer, { xPercent: moveX * -1 }, { xPercent: moveX }, 0);
+        }
+        if (rotateZ) {
+          cursorXTimeline.fromTo(layer, { rotateZ: rotateZ * -1 }, { rotateZ: rotateZ }, 0);
+        }
+        if (moveY) {
+          cursorYTimeline.fromTo(layer, { yPercent: moveY * -1 }, { yPercent: moveY }, 0);
+        }
       });
 
       //////////////////////

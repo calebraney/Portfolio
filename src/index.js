@@ -6,7 +6,7 @@ import { scrollIn } from './interactions/scrollIn';
 import { sectionEdge } from './interactions/sectionEdge';
 import { cursor } from './interactions/cursor';
 import { load } from './interactions/load';
-import { homePitchMarquee } from './pages/home';
+import { homePitchMarquee, homeWorkHover } from './pages/home';
 import { caseMobile, nextCase } from './pages/case';
 import { contact } from './pages/contact';
 import { blogHeaderBoxes, blogHeaderScroll } from './pages/blog';
@@ -296,6 +296,9 @@ document.addEventListener('DOMContentLoaded', function () {
       hoverActive(gsapContext);
       sectionEdge();
       contact();
+      if (!isMobile) {
+        homeWorkHover();
+      }
       //custom interactions
       if (!isMobile || !reduceMotion) {
         caseMobile();
