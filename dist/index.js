@@ -2202,7 +2202,7 @@
         { yPercent: -110, rotateX: 90, skewX: -12, skewY: -15 },
         "<.1"
       );
-      tlLoad.fromTo(wrap, { yPercent: 0 }, { yPercent: -110, duration: 0.8 }, "<.2");
+      tlLoad.fromTo(wrap, { yPercent: 0 }, { yPercent: -120, duration: 0.8 }, "<.2");
       tlLoad.fromTo(edgeBot, { height: "100%" }, { height: "0%", duration: 0.6 }, "<.2");
       tlLoad.set(wrap, { display: "none" });
       const introDuration = tlLoad.duration() * 1e3;
@@ -2215,7 +2215,7 @@
           }
         });
         tlClick.set(wrap, { display: "flex" });
-        tlClick.fromTo(wrap, { yPercent: 110, duration: 0.8 }, { yPercent: 0, duration: 0.8 });
+        tlClick.fromTo(wrap, { yPercent: 120, duration: 0.8 }, { yPercent: 0, duration: 0.8 });
         tlClick.fromTo(edgeTop, { height: "100%" }, { height: "0%", duration: 0.6 }, "<.2");
         tlClick.fromTo(imageTop, { opacity: 0 }, { opacity: 1, duration: 0.3 }, "<.4");
         tlClick.fromTo(
