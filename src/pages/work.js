@@ -23,91 +23,74 @@ export const work = function () {
     const services = wrap.querySelector(SERVICES);
     const paragraph = wrap.querySelector(PARAGRAPH);
     const button = wrap.querySelector(BUTTON);
-    const paragraphSplit = runSplit(paragraph);
+    const paragraphSplit = runSplit(paragraph, 'lines, words');
+    let isTop = false;
+    if (index === 0) {
+      isTop = true;
+    }
     //gsap timeline
     let direction = 1;
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: wrap,
-        start: 'top center',
+        start: isTop ? 'center 25%' : 'top center',
         end: 'bottom center',
         ease: 'none',
-        scrub: false,
+        scrub: true,
         markers: true,
-        onEnter: (self) => {
-          console.log(index, self.isActive, 'Enter');
-
-          setTimeout(() => {
-            scrollInTL.restart();
-          }, 1000);
-        },
-        onEnterBack: (self) => {
-          console.log(index, self.isActive, 'EnterBack');
-
-          setTimeout(() => {
-            scrollInTL.restart();
-          }, 1000);
-        },
-        onLeave: (self) => {
-          console.log(index, self.isActive, 'Leave');
-
-          scrollInTL.reverse();
-        },
-        onLeaveBack: (self) => {
-          console.log(index, self.isActive, 'LeaveBack');
-
-          scrollInTL.reverse();
-        },
       },
     });
 
-    const scrollInTL = gsap.timeline({
-      paused: true,
-      defaults: {
-        ease: 'power1.out',
-        duration: 0.4,
-      },
-    });
-    scrollInTL.set(right, { display: 'flex' });
-    if (arrowTop !== null) {
-      scrollInTL.fromTo(arrowTop, { yPercent: 110 * direction }, { yPercent: 0 });
-    }
-    scrollInTL.fromTo(heading, { yPercent: 110 * direction }, { yPercent: 0 }, '<.2');
-    scrollInTL.fromTo(services, { yPercent: 110 * direction }, { yPercent: 0 }, '<.2');
-    scrollInTL.fromTo(
-      paragraphSplit.lines,
-      { yPercent: 110 * direction },
-      { yPercent: 0 },
-      { yPercent: 0, stagger: { each: 0.2, from: 'start' } },
-      '<.2'
-    );
-    scrollInTL.fromTo(button, { yPercent: 110 * direction }, { yPercent: 0 }, '<.2');
-    if (arrowBot !== null) {
-      scrollInTL.fromTo(arrowBot, { yPercent: 110 * direction }, { yPercent: 0 });
-    }
-
-    // const scrollOutTL = gsap.timeline({
+    // const scrollInTL = gsap.timeline({
     //   paused: true,
-    //   delay: 1,
     //   defaults: {
-    //     ease: 'power2.out',
-    //     duration: 0.6,
+    //     ease: 'power1.out',
+    //     duration: 0.4,
     //   },
     // });
-    // if (arrowTop !== null) {
-    //   scrollOutTL.to(arrowTop, { yPercent: -110 });
-    // }
-    // scrollOutTL.to(heading, { yPercent: -110 }, '<.2');
-    // scrollOutTL.to(services, { yPercent: -110 }, '<.2');
-    // scrollOutTL.to(paragraphSplit.lines, { yPercent: 0, stagger: 0.1 }, '<.2');
-    // scrollOutTL.to(button, { yPercent: -110 }, '<.2');
-    // if (arrowBot !== null) {
-    //   scrollOutTL.to(arrowBot, { yPercent: -110 });
-    // }
-    // // scrollInTL.set(right, { display: 'none' });
-    // //play first one on load
-    if (index === 0) {
-      scrollInTL.restart();
+    //item in interaction
+    console.log(paragraphSplit);
+    if (!isTop) {
+      tl.set(right, { display: 'flex' });
+      if (arrowTop !== null) {
+        tl.fromTo(arrowTop, { yPercent: 110 * direction }, { yPercent: 0 });
+      }
+      tl.fromTo(heading, { yPercent: 110 * direction }, { yPercent: 0 }, '<.2');
+      tl.fromTo(services, { yPercent: 110 * direction }, { yPercent: 0 }, '<.2');
+      tl.fromTo(
+        paragraphSplit.lines,
+        { yPercent: 110 * direction, opacity: 0 },
+        { yPercent: 0, opacity: 1, stagger: { each: 0.2, from: 'start' } },
+        '<.2'
+      );
+      tl.fromTo(button, { yPercent: 110 * direction }, { yPercent: 0 }, '<.2');
+      if (arrowBot !== null) {
+        tl.fromTo(arrowBot, { yPercent: 110 * direction }, { yPercent: 0 });
+      }
+      tl.to(heading, { duration: 5 });
     }
+    if (isTop) {
+      right.style.display = 'flex';
+    }
+
+    if (arrowTop !== null) {
+      tl.to(arrowTop, { yPercent: -110 });
+    }
+    tl.to(heading, { yPercent: -110 }, '<.2');
+    tl.to(services, { yPercent: -110 }, '<.2');
+    tl.to(
+      paragraphSplit.lines,
+      { yPercent: -110, opacity: 0, stagger: { each: 0.2, from: 'start' } },
+      '<.2'
+    );
+    tl.to(button, { yPercent: -110 }, '<.2');
+    if (arrowBot !== null) {
+      tl.to(arrowBot, { yPercent: -110 });
+    }
+    // scrollInTL.set(right, { display: 'none' });
+    // //play first one on load
+    // if (index === 0) {
+    //   scrollInTL.restart();
+    // }
   });
 };
