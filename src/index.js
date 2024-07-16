@@ -492,3 +492,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   scrollReset();
 });
+
+// //  refresh scrolltrigger after page load
+// window.addEventListener('load', (event) => {
+//   ScrollTrigger.refresh(true);
+//   console.log('load');
+// });

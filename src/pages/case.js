@@ -29,10 +29,10 @@ export const caseMobile = function () {
         ease: 'power1.out',
       },
     });
-    tl.fromTo(mobile1, { yPercent: 60 }, { yPercent: 0, delay: 1 }, '<');
+    tl.fromTo(mobile1, { yPercent: 60 }, { yPercent: 0, delay: 0.5 }, '<');
     tl.fromTo(mobile2, { yPercent: 40 }, { yPercent: 0 }, '<');
     tl.fromTo(mobile3, { yPercent: 20 }, { yPercent: 0 }, '<');
-    tl.to(mobile1, { yPercent: -20, delay: 2 }, '<');
+    tl.to(mobile1, { yPercent: -20, delay: 1.5 }, '<');
     tl.to(mobile2, { yPercent: -40 }, '<');
     tl.to(mobile3, { yPercent: -60 }, '<');
   });
