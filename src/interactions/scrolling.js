@@ -39,19 +39,19 @@ export const scrolling = function (gsapContext) {
   const CLIP_END = 'data-ix-scrolling-clip-end';
   const CLIP_TYPE = 'data-ix-scrolling-clip-type';
 
-  const scrollingItems = gsap.utils.toArray(WRAP);
-  scrollingItems.forEach((scrollingItem) => {
-    const layers = gsap.utils.toArray(scrollingItem.querySelectorAll(LAYER));
+  const scrollingSections = gsap.utils.toArray(WRAP);
+  scrollingSections.forEach((scrollingSection) => {
+    const layers = gsap.utils.toArray(scrollingSection.querySelectorAll(LAYER));
     // return if items are null
-    if (!scrollingItem || layers.length === 0) return;
+    if (!scrollingSection || layers.length === 0) return;
     // find the target element if one exists, otherwise the parent is the target
-    let trigger = scrollingItem.querySelector(TRIGGER);
+    let trigger = scrollingSection.querySelector(TRIGGER);
     if (!trigger) {
-      trigger = scrollingItem;
+      trigger = scrollingSection;
     }
 
     //check breakpoints and quit function if set on specific breakpoints
-    let runOnBreakpoint = checkBreakpoints(scrollingItem, ANIMATION_ID, gsapContext);
+    let runOnBreakpoint = checkBreakpoints(scrollingSection, ANIMATION_ID, gsapContext);
     if (runOnBreakpoint === false) return;
     //create variables from GSAP context
     let { isMobile, isTablet, isDesktop, reduceMotion } = gsapContext.conditions;
@@ -64,21 +64,21 @@ export const scrolling = function (gsapContext) {
       toggleActions: null,
     };
     // get custom timeline settings or set them at the default
-    tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(START));
-    tlSettings.end = attr(tlSettings.end, scrollingItem.getAttribute(END));
-    tlSettings.scrub = attr(tlSettings.scrub, scrollingItem.getAttribute(SCRUB));
+    tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(START));
+    tlSettings.end = attr(tlSettings.end, scrollingSection.getAttribute(END));
+    tlSettings.scrub = attr(tlSettings.scrub, scrollingSection.getAttribute(SCRUB));
     //conditionally update tablet and mobile values
-    if (isTablet && scrollingItem.hasAttribute(TABLET_START)) {
-      tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(TABLET_START));
+    if (isTablet && scrollingSection.hasAttribute(TABLET_START)) {
+      tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(TABLET_START));
     }
-    if (isTablet && scrollingItem.hasAttribute(TABLET_END)) {
-      tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(TABLET_END));
+    if (isTablet && scrollingSection.hasAttribute(TABLET_END)) {
+      tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(TABLET_END));
     }
-    if (isMobile && scrollingItem.hasAttribute(MOBILE_START)) {
-      tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(MOBILE_START));
+    if (isMobile && scrollingSection.hasAttribute(MOBILE_START)) {
+      tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(MOBILE_START));
     }
-    if (isMobile && scrollingItem.hasAttribute(MOBILE_END)) {
-      tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(MOBILE_END));
+    if (isMobile && scrollingSection.hasAttribute(MOBILE_END)) {
+      tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(MOBILE_END));
     }
     // create timeline
     const tl = gsap.timeline({
@@ -87,7 +87,7 @@ export const scrolling = function (gsapContext) {
         start: tlSettings.start,
         end: tlSettings.end,
         scrub: tlSettings.scrub,
-        markers: false,
+        markers: true,
         // onEnter: () => {
         //   console.log(tl, tl.scrollTrigger.start, tl.scrollTrigger.end);
         // },

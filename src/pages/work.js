@@ -40,14 +40,6 @@ export const work = function () {
         markers: true,
       },
     });
-
-    // const scrollInTL = gsap.timeline({
-    //   paused: true,
-    //   defaults: {
-    //     ease: 'power1.out',
-    //     duration: 0.4,
-    //   },
-    // });
     //item in interaction
     console.log(paragraphSplit);
     if (!isTop) {

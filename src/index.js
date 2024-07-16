@@ -183,6 +183,8 @@ document.addEventListener('DOMContentLoaded', function () {
         tlLoad.kill();
         clickAnimation = clickTimeline();
       }, introDuration);
+    } else {
+      load(gsapContext);
     }
 
     // On Link Click

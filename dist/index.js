@@ -1245,15 +1245,15 @@
     const CLIP_START = "data-ix-scrolling-clip-start";
     const CLIP_END = "data-ix-scrolling-clip-end";
     const CLIP_TYPE = "data-ix-scrolling-clip-type";
-    const scrollingItems = gsap.utils.toArray(WRAP);
-    scrollingItems.forEach((scrollingItem) => {
-      const layers = gsap.utils.toArray(scrollingItem.querySelectorAll(LAYER));
-      if (!scrollingItem || layers.length === 0) return;
-      let trigger = scrollingItem.querySelector(TRIGGER);
+    const scrollingSections = gsap.utils.toArray(WRAP);
+    scrollingSections.forEach((scrollingSection) => {
+      const layers = gsap.utils.toArray(scrollingSection.querySelectorAll(LAYER));
+      if (!scrollingSection || layers.length === 0) return;
+      let trigger = scrollingSection.querySelector(TRIGGER);
       if (!trigger) {
-        trigger = scrollingItem;
+        trigger = scrollingSection;
       }
-      let runOnBreakpoint = checkBreakpoints(scrollingItem, ANIMATION_ID, gsapContext);
+      let runOnBreakpoint = checkBreakpoints(scrollingSection, ANIMATION_ID, gsapContext);
       if (runOnBreakpoint === false) return;
       let { isMobile, isTablet, isDesktop, reduceMotion } = gsapContext.conditions;
       const tlSettings = {
@@ -1262,20 +1262,20 @@
         end: "bottom top",
         toggleActions: null
       };
-      tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(START));
-      tlSettings.end = attr(tlSettings.end, scrollingItem.getAttribute(END));
-      tlSettings.scrub = attr(tlSettings.scrub, scrollingItem.getAttribute(SCRUB));
-      if (isTablet && scrollingItem.hasAttribute(TABLET_START)) {
-        tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(TABLET_START));
+      tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(START));
+      tlSettings.end = attr(tlSettings.end, scrollingSection.getAttribute(END));
+      tlSettings.scrub = attr(tlSettings.scrub, scrollingSection.getAttribute(SCRUB));
+      if (isTablet && scrollingSection.hasAttribute(TABLET_START)) {
+        tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(TABLET_START));
       }
-      if (isTablet && scrollingItem.hasAttribute(TABLET_END)) {
-        tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(TABLET_END));
+      if (isTablet && scrollingSection.hasAttribute(TABLET_END)) {
+        tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(TABLET_END));
       }
-      if (isMobile && scrollingItem.hasAttribute(MOBILE_START)) {
-        tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(MOBILE_START));
+      if (isMobile && scrollingSection.hasAttribute(MOBILE_START)) {
+        tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(MOBILE_START));
       }
-      if (isMobile && scrollingItem.hasAttribute(MOBILE_END)) {
-        tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(MOBILE_END));
+      if (isMobile && scrollingSection.hasAttribute(MOBILE_END)) {
+        tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(MOBILE_END));
       }
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -1283,7 +1283,7 @@
           start: tlSettings.start,
           end: tlSettings.end,
           scrub: tlSettings.scrub,
-          markers: false
+          markers: true
           // onEnter: () => {
           //   console.log(tl, tl.scrollTrigger.start, tl.scrollTrigger.end);
           // },
@@ -1716,11 +1716,17 @@
     const DEFAULT_STAGGER = "<0.2";
     const items = gsap.utils.toArray(`[${ATTRIBUTE}]`);
     if (items.length === 0) return;
-    const tl = gsap.timeline({
+    let tl = gsap.timeline({
       paused: true,
       defaults: {
         ease: "power1.out",
         duration: 0.6
+      },
+      onComplete: (self) => {
+        setTimeout(() => {
+          tl.kill();
+          tl = null;
+        }, 100);
       }
     });
     const loadHeading = function(item) {
@@ -2322,6 +2328,8 @@
           tlLoad.kill();
           clickAnimation = clickTimeline();
         }, introDuration);
+      } else {
+        load(gsapContext);
       }
       document.querySelectorAll("a").forEach(function(link) {
         link.addEventListener("click", function(e) {

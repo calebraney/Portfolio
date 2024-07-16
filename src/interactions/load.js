@@ -30,11 +30,17 @@ export const load = function (gsapContext) {
   const items = gsap.utils.toArray(`[${ATTRIBUTE}]`);
   if (items.length === 0) return;
 
-  const tl = gsap.timeline({
+  let tl = gsap.timeline({
     paused: true,
     defaults: {
       ease: 'power1.out',
       duration: 0.6,
+    },
+    onComplete: (self) => {
+      setTimeout(() => {
+        tl.kill();
+        tl = null;
+      }, 100);
     },
   });
   //anything that needs to be set to start the interaction happens here
