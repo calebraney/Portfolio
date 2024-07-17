@@ -86,3 +86,28 @@ export const work = function () {
     // }
   });
 };
+
+/*
+
+Try something like this:
+
+
+const boxes = gsap.utils.toArray('.box');
+boxes.forEach(box => {
+  const anim = gsap.to(box, { x: 300, paused: true });
+  
+  ScrollTrigger.create({
+    trigger: box,
+    start: "center 70%",
+    onEnter: () => anim.play()
+  });
+  
+  ScrollTrigger.create({
+    trigger: box,
+    start: "top bottom",
+    onLeaveBack: () => anim.pause(0)
+  });
+});
+
+
+*/
