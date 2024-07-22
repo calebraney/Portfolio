@@ -4,54 +4,82 @@ export const scrolling = function (gsapContext) {
   //animation ID
   const ANIMATION_ID = 'scrolling';
   //elements
-  const SCROLLING_WRAP = `[data-ix-scrolling="wrap"]`;
-  const SCROLLING_TRIGGER = `[data-ix-scrolling="trigger"]`;
-  const SCROLLING_LAYER = '[data-ix-scrolling="layer"]';
+  const WRAP = `[data-ix-scrolling="wrap"]`;
+  const TRIGGER = `[data-ix-scrolling="trigger"]`;
+  const LAYER = '[data-ix-scrolling="layer"]';
   //timeline options
-  const SCROLLING_START = 'data-ix-scrolling-start';
-  const SCROLLING_END = 'data-ix-scrolling-end';
-  const SCROLLING_SCRUB = 'data-ix-scrolling-scrub';
+  const START = 'data-ix-scrolling-start';
+  const END = 'data-ix-scrolling-end';
+  const TABLET_START = 'data-ix-scrolling-start-tablet';
+  const TABLET_END = 'data-ix-scrolling-end-tablet';
+  const MOBILE_START = 'data-ix-scrolling-start-mobile';
+  const MOBILE_END = 'data-ix-scrolling-end-mobile';
+  const SCRUB = 'data-ix-scrolling-scrub';
   //tween options
-  const SCROLLING_POSITION = 'data-ix-scrolling-position'; // sequential by default, use "<" to start tweens together
-  const SCROLLING_X_START = 'data-ix-scrolling-x-start';
-  const SCROLLING_X_END = 'data-ix-scrolling-x-end';
-  const SCROLLING_Y_START = 'data-ix-scrolling-y-start';
-  const SCROLLING_Y_END = 'data-ix-scrolling-y-end';
-  const SCROLLING_WIDTH_START = 'data-ix-scrolling-width-start';
-  const SCROLLING_WIDTH_END = 'data-ix-scrolling-width-end';
-  const SCROLLING_HEIGHT_START = 'data-ix-scrolling-height-start';
-  const SCROLLING_HEIGHT_END = 'data-ix-scrolling-height-end';
-  const SCROLLING_ROTATE_Z_START = 'data-ix-scrolling-rotate-z-start';
-  const SCROLLING_ROTATE_Z_END = 'data-ix-scrolling-rotate-z-end';
-  const SCROLLING_OPACITY_START = 'data-ix-scrolling-opacity-start';
-  const SCROLLING_OPACITY_END = 'data-ix-scrolling-opacity-end';
-  const SCROLLING_CLIP_START = 'data-ix-scrolling-clip-start';
-  const SCROLLING_CLIP_END = 'data-ix-scrolling-clip-end';
-  const SCROLLING_CLIP_TYPE = 'data-ix-scrolling-clip-end';
+  const POSITION = 'data-ix-scrolling-position'; // sequential by default, use "<" to start tweens together
+  const X_START = 'data-ix-scrolling-x-start';
+  const X_END = 'data-ix-scrolling-x-end';
+  const Y_START = 'data-ix-scrolling-y-start';
+  const Y_END = 'data-ix-scrolling-y-end';
+  const SCALE_START = 'data-ix-scrolling-scale-start';
+  const SCALE_END = 'data-ix-scrolling-scale-end';
+  const WIDTH_START = 'data-ix-scrolling-width-start';
+  const WIDTH_END = 'data-ix-scrolling-width-end';
+  const HEIGHT_START = 'data-ix-scrolling-height-start';
+  const HEIGHT_END = 'data-ix-scrolling-height-end';
+  const ROTATE_X_START = 'data-ix-scrolling-rotate-x-start';
+  const ROTATE_X_END = 'data-ix-scrolling-rotate-x-end';
+  const ROTATE_Y_START = 'data-ix-scrolling-rotate-y-start';
+  const ROTATE_Y_END = 'data-ix-scrolling-rotate-y-end';
+  const ROTATE_Z_START = 'data-ix-scrolling-rotate-z-start';
+  const ROTATE_Z_END = 'data-ix-scrolling-rotate-z-end';
+  const OPACITY_START = 'data-ix-scrolling-opacity-start';
+  const OPACITY_END = 'data-ix-scrolling-opacity-end';
+  const CLIP_START = 'data-ix-scrolling-clip-start';
+  const CLIP_END = 'data-ix-scrolling-clip-end';
+  const CLIP_TYPE = 'data-ix-scrolling-clip-type';
 
-  const scrollingItems = gsap.utils.toArray(SCROLLING_WRAP);
-  scrollingItems.forEach((scrollingItem) => {
-    const layers = scrollingItem.querySelectorAll(SCROLLING_LAYER);
+  const scrollingSections = gsap.utils.toArray(WRAP);
+  scrollingSections.forEach((scrollingSection) => {
+    const layers = gsap.utils.toArray(scrollingSection.querySelectorAll(LAYER));
     // return if items are null
-    if (!scrollingItem || layers.length === 0) return;
+    if (!scrollingSection || layers.length === 0) return;
     // find the target element if one exists, otherwise the parent is the target
-    let trigger = scrollingItem.querySelector(SCROLLING_TRIGGER);
+    let trigger = scrollingSection.querySelector(TRIGGER);
     if (!trigger) {
-      trigger = scrollingItem;
+      trigger = scrollingSection;
     }
+
     //check breakpoints and quit function if set on specific breakpoints
-    let runOnBreakpoint = checkBreakpoints(scrollingItem, ANIMATION_ID, gsapContext);
+    let runOnBreakpoint = checkBreakpoints(scrollingSection, ANIMATION_ID, gsapContext);
     if (runOnBreakpoint === false) return;
+    //create variables from GSAP context
+    let { isMobile, isTablet, isDesktop, reduceMotion } = gsapContext.conditions;
+
     // default GSAP options for animation
     const tlSettings = {
-      scrub: 0.5,
+      scrub: true,
       start: 'top bottom',
       end: 'bottom top',
+      toggleActions: null,
     };
     // get custom timeline settings or set them at the default
-    tlSettings.start = attr(tlSettings.start, scrollingItem.getAttribute(SCROLLING_START));
-    tlSettings.end = attr(tlSettings.end, scrollingItem.getAttribute(SCROLLING_END));
-    tlSettings.scrub = attr(tlSettings.scrub, scrollingItem.getAttribute(SCROLLING_SCRUB));
+    tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(START));
+    tlSettings.end = attr(tlSettings.end, scrollingSection.getAttribute(END));
+    tlSettings.scrub = attr(tlSettings.scrub, scrollingSection.getAttribute(SCRUB));
+    //conditionally update tablet and mobile values
+    if (isTablet && scrollingSection.hasAttribute(TABLET_START)) {
+      tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(TABLET_START));
+    }
+    if (isTablet && scrollingSection.hasAttribute(TABLET_END)) {
+      tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(TABLET_END));
+    }
+    if (isMobile && scrollingSection.hasAttribute(MOBILE_START)) {
+      tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(MOBILE_START));
+    }
+    if (isMobile && scrollingSection.hasAttribute(MOBILE_END)) {
+      tlSettings.start = attr(tlSettings.start, scrollingSection.getAttribute(MOBILE_END));
+    }
     // create timeline
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -60,19 +88,23 @@ export const scrolling = function (gsapContext) {
         end: tlSettings.end,
         scrub: tlSettings.scrub,
         markers: false,
+        // onEnter: () => {
+        //   console.log(tl, tl.scrollTrigger.start, tl.scrollTrigger.end);
+        // },
       },
       defaults: {
         duration: 1,
         ease: 'none',
       },
     });
+
     //////////////////////
     // Adding tweens
     layers.forEach((layer) => {
       if (!layer) return;
       //objects for tween
       const varsFrom = {};
-      const varsTo = {};
+      const varsTo = { immediateRender: true };
 
       //function to process data attributes and return the correct value if set.
       const processAttribute = function (attributeName, defaultValue) {
@@ -87,26 +119,33 @@ export const scrolling = function (gsapContext) {
         }
       };
       //add properties to vars objects
-      varsFrom.x = processAttribute(SCROLLING_X_START, '0%');
-      varsTo.x = processAttribute(SCROLLING_X_END, '0%');
-      varsFrom.y = processAttribute(SCROLLING_Y_START, '0%');
-      varsTo.y = processAttribute(SCROLLING_Y_END, '0%');
-      varsFrom.width = processAttribute(SCROLLING_WIDTH_START, '0%');
-      varsTo.width = processAttribute(SCROLLING_WIDTH_END, '0%');
-      varsFrom.height = processAttribute(SCROLLING_HEIGHT_START, '0%');
-      varsTo.height = processAttribute(SCROLLING_HEIGHT_END, '0%');
-      varsFrom.rotateZ = processAttribute(SCROLLING_ROTATE_Z_START, 0);
-      varsTo.rotateZ = processAttribute(SCROLLING_ROTATE_Z_END, 0);
-      varsFrom.opacity = processAttribute(SCROLLING_OPACITY_START, 0);
-      varsTo.opacity = processAttribute(SCROLLING_OPACITY_END, 0);
-      varsFrom.clipPath = processAttribute(SCROLLING_CLIP_START, 'string');
-      varsTo.clipPath = processAttribute(SCROLLING_CLIP_END, 'string');
+      varsFrom.x = processAttribute(X_START, '0%');
+      varsTo.x = processAttribute(X_END, '0%');
+      varsFrom.y = processAttribute(Y_START, '0%');
+      varsTo.y = processAttribute(Y_END, '0%');
+      varsFrom.scale = processAttribute(SCALE_START, 1);
+      varsTo.scale = processAttribute(SCALE_END, 1);
+      varsFrom.width = processAttribute(WIDTH_START, '0%');
+      varsTo.width = processAttribute(WIDTH_END, '0%');
+      varsFrom.height = processAttribute(HEIGHT_START, '0%');
+      varsTo.height = processAttribute(HEIGHT_END, '0%');
+      varsFrom.rotateX = processAttribute(ROTATE_X_START, 0);
+      varsTo.rotateX = processAttribute(ROTATE_X_END, 0);
+      varsFrom.rotateY = processAttribute(ROTATE_Y_START, 0);
+      varsTo.rotateY = processAttribute(ROTATE_Y_END, 0);
+      varsFrom.rotateZ = processAttribute(ROTATE_Z_START, 0);
+      varsTo.rotateZ = processAttribute(ROTATE_Z_END, 0);
+      varsFrom.opacity = processAttribute(OPACITY_START, 0);
+      varsTo.opacity = processAttribute(OPACITY_END, 0);
+      varsFrom.clipPath = processAttribute(CLIP_START, 'string');
+      varsTo.clipPath = processAttribute(CLIP_END, 'string');
 
       // get the position attribute
-      const position = attr('<', layer.getAttribute(SCROLLING_POSITION));
+      const position = attr('<', layer.getAttribute(POSITION));
 
       //add tween
       let fromTween = tl.fromTo(layer, varsFrom, varsTo, position);
     });
+    // console.log(tl);
   });
 };

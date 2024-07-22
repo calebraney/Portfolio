@@ -4,20 +4,20 @@ export const mouseOver = function (gsapContext) {
   // animation ID
   const ANIMATION_ID = 'mouseover';
   //elements
-  const MOUSEOVER_WRAP = '[data-ix-mouseover="wrap"]';
-  const MOUSEOVER_LAYER = '[data-ix-mouseover="layer"]';
-  const MOUSEOVER_TARGET = '[data-ix-mouseover="target"]';
+  const WRAP = '[data-ix-mouseover="wrap"]';
+  const LAYER = '[data-ix-mouseover="layer"]';
+  const TARGET = '[data-ix-mouseover="target"]';
   //options
-  const MOUSEOVER_DURATION = 'data-ix-mouseover-duration';
-  const MOUSEOVER_EASE = 'data-ix-mouseover-ease';
-  const MOUSEOVER_MOVE_X = 'data-ix-mouseover-move-x';
-  const MOUSEOVER_MOVE_Y = 'data-ix-mouseover-move-y';
-  const MOUSEOVER_ROTATE_Z = 'data-ix-mouseover-rotate-z';
+  const DURATION = 'data-ix-mouseover-duration';
+  const EASE = 'data-ix-mouseover-ease';
+  const MOVE_X = 'data-ix-mouseover-move-x';
+  const MOVE_Y = 'data-ix-mouseover-move-y';
+  const ROTATE_Z = 'data-ix-mouseover-rotate-z';
 
   // select the items
-  const mouseOverItems = document.querySelectorAll(MOUSEOVER_WRAP);
+  const mouseOverItems = document.querySelectorAll(WRAP);
   mouseOverItems.forEach((mouseOverItem) => {
-    const layers = mouseOverItem.querySelectorAll(MOUSEOVER_LAYER);
+    const layers = mouseOverItem.querySelectorAll(LAYER);
     // return if items are null
     if (layers.length === 0) return;
 
@@ -26,7 +26,7 @@ export const mouseOver = function (gsapContext) {
     if (runOnBreakpoint === false) return;
 
     // find the target element if one exists, otherwise tge parent is the target
-    let target = mouseOverItem.querySelector(MOUSEOVER_TARGET);
+    let target = mouseOverItem.querySelector(TARGET);
     if (!target) {
       target = mouseOverItem;
     }
@@ -40,8 +40,8 @@ export const mouseOver = function (gsapContext) {
       let initialProgress = { x: 0.5, y: 0.5 };
       let progressObject = { x: initialProgress.x, y: initialProgress.y };
       //create default duration and ease
-      let duration = attr(0.5, mouseOverItem.getAttribute(MOUSEOVER_DURATION));
-      let ease = attr('power1.out', mouseOverItem.getAttribute(MOUSEOVER_EASE));
+      let duration = attr(0.5, mouseOverItem.getAttribute(DURATION));
+      let ease = attr('power1.out', mouseOverItem.getAttribute(EASE));
       // Create X timeline
       let cursorXTimeline = gsap.timeline({ paused: true, defaults: { ease: 'none' } });
       // Create Y Timeline
@@ -51,19 +51,33 @@ export const mouseOver = function (gsapContext) {
       //////////////////////
       // Adding tweens
       layers.forEach((layer) => {
+        //function to process data attributes and return the correct value if set.
+        const processAttribute = function (attributeName, defaultValue) {
+          const hasAttribute = layer.hasAttribute(attributeName);
+          const attributeValue = attr(defaultValue, layer.getAttribute(attributeName));
+          // if the attribute has the default value return the attribute value
+          // (alternatively, could just include the default value)
+          if (hasAttribute) {
+            return attributeValue;
+          } else {
+            return;
+          }
+        };
+        //add properties to vars objects
         // get custom move amounts or set them at the default of 10%
-        let moveX = attr(10, layer.getAttribute(MOUSEOVER_MOVE_X));
-        let moveY = attr(10, layer.getAttribute(MOUSEOVER_MOVE_Y));
-        let rotateZ = attr(0, layer.getAttribute(MOUSEOVER_ROTATE_Z));
+        let moveX = processAttribute(MOVE_X, 10);
+        let moveY = processAttribute(MOVE_Y, 10);
+        let rotateZ = processAttribute(ROTATE_Z, 5);
         // horizontal timeline
-        cursorXTimeline.fromTo(
-          layer,
-          { xPercent: moveX * -1, rotateZ: rotateZ * -1 },
-          { xPercent: moveX, rotateZ: rotateZ },
-          0
-        );
-        //vertical timeline
-        cursorYTimeline.fromTo(layer, { yPercent: moveY * -1 }, { yPercent: moveY }, 0);
+        if (moveX) {
+          cursorXTimeline.fromTo(layer, { xPercent: moveX * -1 }, { xPercent: moveX }, 0);
+        }
+        if (rotateZ) {
+          cursorXTimeline.fromTo(layer, { rotateZ: rotateZ * -1 }, { rotateZ: rotateZ }, 0);
+        }
+        if (moveY) {
+          cursorYTimeline.fromTo(layer, { yPercent: moveY * -1 }, { yPercent: moveY }, 0);
+        }
       });
 
       //////////////////////

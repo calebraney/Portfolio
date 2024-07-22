@@ -1,10 +1,10 @@
 export const sectionEdge = function () {
   //grow animation
-  const sectionEdgeGrow = function () {
-    const growElements = document.querySelectorAll("[gsap-el='edge-shrink']");
-    if (growElements.length === 0) return;
+  const sectionEdgeShrink = function () {
+    const elements = document.querySelectorAll("[data-ix-edge='shrink']");
+    if (elements.length === 0) return;
     // Section Edge Shrink Animation
-    growElements.forEach((item) => {
+    elements.forEach((item) => {
       let targetElement = item;
 
       let tl = gsap.timeline({
@@ -13,7 +13,7 @@ export const sectionEdge = function () {
           // trigger element - viewport
           start: 'top bottom',
           end: 'bottom top',
-          scrub: 0.8,
+          scrub: true,
         },
       });
       tl.fromTo(
@@ -29,13 +29,13 @@ export const sectionEdge = function () {
       );
     });
   };
-  sectionEdgeGrow();
+  sectionEdgeShrink();
   //shrink animation
-  const sectionEdgeShrink = function () {
-    const shrinkElements = document.querySelectorAll("[gsap-el='edge-grow']");
-    if (shrinkElements.length === 0) return;
+  const sectionEdgeGrow = function () {
+    const elements = document.querySelectorAll("[data-ix-edge='grow']");
+    if (elements.length === 0) return;
     // Section Edge Shrink Animation
-    shrinkElements.forEach((item) => {
+    elements.forEach((item) => {
       let targetElement = item;
       let tl = gsap.timeline({
         scrollTrigger: {
@@ -43,7 +43,7 @@ export const sectionEdge = function () {
           // trigger element - viewport
           start: 'top bottom',
           end: 'bottom top',
-          scrub: 0.8,
+          scrub: true,
         },
       });
       tl.fromTo(
@@ -59,5 +59,5 @@ export const sectionEdge = function () {
       );
     });
   };
-  sectionEdgeShrink();
+  sectionEdgeGrow();
 };
