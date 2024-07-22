@@ -87,7 +87,7 @@ export const scrolling = function (gsapContext) {
         start: tlSettings.start,
         end: tlSettings.end,
         scrub: tlSettings.scrub,
-        markers: true,
+        markers: false,
         // onEnter: () => {
         //   console.log(tl, tl.scrollTrigger.start, tl.scrollTrigger.end);
         // },

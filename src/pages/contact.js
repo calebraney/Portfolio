@@ -81,7 +81,7 @@ export const contact = function () {
   optionFieldFocus();
 
   // Function to animate lottie line animation on focus of form field
-  function dynamicFieldFocus(event) {
+  function dynamicFieldFocus() {
     const dyamicFields = document.querySelectorAll('.form_dynamic_field');
     if (dyamicFields.length === 0) return;
     // Add event listener for focusing on form fields

@@ -454,6 +454,7 @@ document.addEventListener('DOMContentLoaded', function () {
     },
     (gsapContext) => {
       let { isMobile, isTablet, isDesktop, reduceMotion } = gsapContext.conditions;
+      // console.log(gsapContext.conditions);
       //Control Functions on page load
       pageTransition(gsapContext);
       //remove for accessibility
@@ -461,31 +462,31 @@ document.addEventListener('DOMContentLoaded', function () {
         mouseOver(gsapContext);
         scrolling(gsapContext);
         scrollIn(gsapContext);
+        sectionEdge();
         //homepage
         homePitchMarquee();
+        homeHeroCircles();
         //blog
         blogHeaderScroll();
         blogHeaderBoxes();
+        //visual interactions not on mobile
+        if (!isMobile) {
+          caseMobile();
+          nextCase();
+          toggleCTABlocks();
+        }
       }
       navMenu(gsapContext);
       hoverActive(gsapContext);
-      sectionEdge();
       contact();
-      homeHeroCircles();
+      //interactiosn not on mobile
       if (!isMobile) {
         work();
         homeWorkHover();
       }
-      //custom interactions
-      if (!isMobile || !reduceMotion) {
-        caseMobile();
-        nextCase();
-        toggleCTABlocks();
-      }
-
+      cursor();
       //globaally run animations on specific breakpoints
       if (isDesktop || isTablet) {
-        cursor();
       }
     }
   );

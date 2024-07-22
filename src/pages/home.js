@@ -65,16 +65,16 @@ export const homeWorkHover = function () {
       paused: true,
       defaults: {
         ease: 'power2.out',
-        duration: 0.8,
+        duration: 0.4,
       },
     });
-    tl.fromTo(visual, { yPercent: 50, scaleY: 1.2 }, { yPercent: 0, scaleY: 1 });
-    tl.fromTo(bg, { height: '0%' }, { height: '100%', duration: 0.6, ease: 'power1.out' }, '<');
-    tl.fromTo(left, { x: '0rem' }, { x: '3rem' }, '<');
-    tl.fromTo(right, { x: '0rem' }, { x: '-3rem' }, '<');
-    tl.fromTo(numberFirst, { yPercent: 0 }, { yPercent: -110, stagger: 0.1, duration: 0.4 }, '<.1');
-    tl.fromTo(visual, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: 'power1.out' }, '<');
-    tl.fromTo(numberSecond, { yPercent: 110 }, { yPercent: 0, stagger: 0.1, duration: 0.4 }, '<.2');
+    tl.fromTo(visual, { yPercent: 50, scaleY: 1.2 }, { yPercent: 0, scaleY: 1, duration: 0.6 });
+    // tl.fromTo(bg, { height: '0%' }, { height: '100%', ease: 'sine.in', duration: 0.3 }, '<');
+    tl.fromTo(left, { x: '0rem' }, { x: '3rem', ease: 'sine.out' }, '<');
+    tl.fromTo(right, { x: '0rem' }, { x: '-3rem', ease: 'sine.out' }, '<');
+    tl.fromTo(numberFirst, { yPercent: 0 }, { yPercent: -110, stagger: 0.1 }, '<.1');
+    tl.fromTo(visual, { opacity: 0 }, { opacity: 1, ease: 'sine.out' }, '<');
+    tl.fromTo(numberSecond, { yPercent: 110 }, { yPercent: 0, stagger: 0.1 }, '<.2');
 
     // tl.progress(0);
     item.addEventListener('mouseenter', function (e) {

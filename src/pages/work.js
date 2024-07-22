@@ -5,26 +5,132 @@ export const work = function () {
   const WRAP = '[data-ix-work="wrap"]';
   const LEFT = '[data-ix-work="left"]';
   const RIGHT = '[data-ix-work="right"]';
-  const ARROW_TOP = '[data-ix-work="arrow-top"]';
-  const ARROW_BOTTOM = '[data-ix-work="arrow-bottom"]';
+  const ARROW_TOP = '[data-ix-work="link-top"]';
+  const ARROW_BOTTOM = '[data-ix-work="link-bottom"]';
   const HEADING = '[data-ix-work="heading"]';
   const SERVICES = '[data-ix-work="services"]';
   const PARAGRAPH = '[data-ix-work="paragraph"]';
   const BUTTON = '[data-ix-work="button"]';
+  const ACTIVE_CLASS = 'is-active';
+  const TRANSITION_CLASS = 'is-transition';
+  const NEXT_CLASS = 'is-next';
+  const PREV_CLASS = 'is-previous';
+  const PREVENT_TRANSITION = 'is-prevent-transition';
+
   //items
+  let activeItem;
   const wraps = gsap.utils.toArray(WRAP);
   if (wraps.length === 0) return;
-  wraps.forEach((wrap, index) => {
-    const left = wrap.querySelector(LEFT);
-    const right = wrap.querySelector(RIGHT);
-    const arrowTop = wrap.querySelector(ARROW_TOP);
-    const arrowBot = wrap.querySelector(ARROW_BOTTOM);
-    const heading = wrap.querySelector(HEADING);
-    const services = wrap.querySelector(SERVICES);
-    const paragraph = wrap.querySelector(PARAGRAPH);
-    const button = wrap.querySelector(BUTTON);
-    const paragraphSplit = runSplit(paragraph, 'lines, words');
-    let isTop = false;
+  wraps.forEach((currentWrap, activeIndex) => {
+    const left = currentWrap.querySelector(LEFT);
+    const right = currentWrap.querySelector(RIGHT);
+    const arrowTop = currentWrap.querySelector(ARROW_TOP);
+    const arrowBot = currentWrap.querySelector(ARROW_BOTTOM);
+    const heading = currentWrap.querySelector(HEADING);
+    const services = currentWrap.querySelector(SERVICES);
+    const button = currentWrap.querySelector(BUTTON);
+    const paragraph = currentWrap.querySelector(PARAGRAPH);
+    const paragraphSplit = runSplit(paragraph, 'lines');
+    //get all the lines
+    paragraphSplit.lines.forEach((line, index) => {
+      //create an empty div after each line
+      line.insertAdjacentHTML('afterend', `<div class="work_para_line_wrap"></div>`);
+      const lineWrap = line.nextElementSibling;
+      //append the line to the div
+      lineWrap.appendChild(line);
+    });
+    //get next and previous items
+    const nextItem = wraps[activeIndex + 1];
+    const prevItem = wraps[activeIndex - 1];
+
+    //utility function to active items in view
+    const activateItem = function () {
+      if (activeItem === currentWrap) {
+        //get all wraps and modify them
+        wraps.forEach((wrap, index) => {
+          //remove all classes
+          wrap.classList.remove(ACTIVE_CLASS, NEXT_CLASS, PREV_CLASS);
+          if (wrap !== activateItem && wrap !== nextItem && wrap !== prevItem) {
+            wrap.classList.remove(TRANSITION_CLASS);
+          }
+          //all previous items
+          if (index < activeIndex) {
+            wrap.classList.add(PREV_CLASS);
+          }
+          //all next items
+          if (index > activeIndex) {
+            wrap.classList.add(NEXT_CLASS);
+          }
+        });
+        currentWrap.classList.add(ACTIVE_CLASS, TRANSITION_CLASS);
+
+        //wait a tiny bit to prevent glitches
+        setTimeout(() => {
+          //get next item and add transition class
+          if (nextItem) {
+            nextItem.classList.add(TRANSITION_CLASS);
+          }
+          //get previous item and add transitionclass
+          if (prevItem) {
+            prevItem.classList.add(TRANSITION_CLASS);
+          }
+        }, 20);
+      }
+    };
+    //gsap timeline
+    ScrollTrigger.create({
+      trigger: currentWrap,
+      start: 'top 50%',
+      end: 'bottom 50%',
+      markers: false,
+      onEnter: () => {
+        activeItem = currentWrap;
+        setTimeout(() => {
+          activateItem();
+        }, 150);
+      },
+      // onLeave: () => {
+      //   currentWrap.classList.add(PREV_CLASS);
+      // },
+      onEnterBack: () => {
+        activeItem = currentWrap;
+        setTimeout(() => {
+          activateItem();
+        }, 150);
+      },
+      // onLeaveBack: () => {
+      //   currentWrap.classList.add(NEXT_CLASS);
+      // },
+    });
+  });
+};
+
+/*
+
+Try something like this:
+
+
+const boxes = gsap.utils.toArray('.box');
+boxes.forEach(box => {
+  const anim = gsap.to(box, { x: 300, paused: true });
+  
+  ScrollTrigger.create({
+    trigger: box,
+    start: "center 70%",
+    onEnter: () => anim.play()
+  });
+  
+  ScrollTrigger.create({
+    trigger: box,
+    start: "top bottom",
+    onLeaveBack: () => anim.pause(0)
+  });
+});
+
+
+*/
+/*
+   let isTop = false;
     if (index === 0) {
       isTop = true;
     }
@@ -84,30 +190,29 @@ export const work = function () {
     // if (index === 0) {
     //   scrollInTL.restart();
     // }
-  });
-};
+    
 
-/*
+    /// Old prevent transition attempt
 
-Try something like this:
-
-
-const boxes = gsap.utils.toArray('.box');
-boxes.forEach(box => {
-  const anim = gsap.to(box, { x: 300, paused: true });
-  
-  ScrollTrigger.create({
-    trigger: box,
-    start: "center 70%",
-    onEnter: () => anim.play()
-  });
-  
-  ScrollTrigger.create({
-    trigger: box,
-    start: "top bottom",
-    onLeaveBack: () => anim.pause(0)
-  });
-});
-
+     const preventTransitions = function (currentWrap) {
+      const otherWraps = [];
+      //set other wraps to prevent transition
+      wraps.forEach((wrap, index) => {
+        if (wrap !== currentWrap && wrap !== nextItem && wrap !== prevItem) {
+          //add to array
+          otherWraps.push(wrap);
+          wrap.classList.add(PREVENT_TRANSITION);
+        }
+      });
+      //remove prevent transition after minimum time
+      setTimeout(() => {
+        if (currentWrap === activeItem) {
+          console.log('clear', otherWraps);
+          otherWraps.forEach((wrap, index) => {
+            wrap.classList.remove(PREVENT_TRANSITION);
+          });
+        }
+      }, 300);
+    };
 
 */

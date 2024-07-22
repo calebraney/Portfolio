@@ -1283,7 +1283,7 @@
           start: tlSettings.start,
           end: tlSettings.end,
           scrub: tlSettings.scrub,
-          markers: true
+          markers: false
           // onEnter: () => {
           //   console.log(tl, tl.scrollTrigger.start, tl.scrollTrigger.end);
           // },
@@ -1876,16 +1876,15 @@
         paused: true,
         defaults: {
           ease: "power2.out",
-          duration: 0.8
+          duration: 0.4
         }
       });
-      tl.fromTo(visual, { yPercent: 50, scaleY: 1.2 }, { yPercent: 0, scaleY: 1 });
-      tl.fromTo(bg, { height: "0%" }, { height: "100%", duration: 0.6, ease: "power1.out" }, "<");
-      tl.fromTo(left, { x: "0rem" }, { x: "3rem" }, "<");
-      tl.fromTo(right, { x: "0rem" }, { x: "-3rem" }, "<");
-      tl.fromTo(numberFirst, { yPercent: 0 }, { yPercent: -110, stagger: 0.1, duration: 0.4 }, "<.1");
-      tl.fromTo(visual, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, "<");
-      tl.fromTo(numberSecond, { yPercent: 110 }, { yPercent: 0, stagger: 0.1, duration: 0.4 }, "<.2");
+      tl.fromTo(visual, { yPercent: 50, scaleY: 1.2 }, { yPercent: 0, scaleY: 1, duration: 0.6 });
+      tl.fromTo(left, { x: "0rem" }, { x: "3rem", ease: "sine.out" }, "<");
+      tl.fromTo(right, { x: "0rem" }, { x: "-3rem", ease: "sine.out" }, "<");
+      tl.fromTo(numberFirst, { yPercent: 0 }, { yPercent: -110, stagger: 0.1 }, "<.1");
+      tl.fromTo(visual, { opacity: 0 }, { opacity: 1, ease: "sine.out" }, "<");
+      tl.fromTo(numberSecond, { yPercent: 110 }, { yPercent: 0, stagger: 0.1 }, "<.2");
       item.addEventListener("mouseenter", function(e) {
         tl.play();
       });
@@ -1915,76 +1914,86 @@
     const WRAP = '[data-ix-work="wrap"]';
     const LEFT = '[data-ix-work="left"]';
     const RIGHT = '[data-ix-work="right"]';
-    const ARROW_TOP = '[data-ix-work="arrow-top"]';
-    const ARROW_BOTTOM = '[data-ix-work="arrow-bottom"]';
+    const ARROW_TOP = '[data-ix-work="link-top"]';
+    const ARROW_BOTTOM = '[data-ix-work="link-bottom"]';
     const HEADING = '[data-ix-work="heading"]';
     const SERVICES = '[data-ix-work="services"]';
     const PARAGRAPH = '[data-ix-work="paragraph"]';
     const BUTTON = '[data-ix-work="button"]';
+    const ACTIVE_CLASS = "is-active";
+    const TRANSITION_CLASS = "is-transition";
+    const NEXT_CLASS = "is-next";
+    const PREV_CLASS = "is-previous";
+    const PREVENT_TRANSITION = "is-prevent-transition";
+    let activeItem;
     const wraps = gsap.utils.toArray(WRAP);
     if (wraps.length === 0) return;
-    wraps.forEach((wrap, index) => {
-      const left = wrap.querySelector(LEFT);
-      const right = wrap.querySelector(RIGHT);
-      const arrowTop = wrap.querySelector(ARROW_TOP);
-      const arrowBot = wrap.querySelector(ARROW_BOTTOM);
-      const heading = wrap.querySelector(HEADING);
-      const services = wrap.querySelector(SERVICES);
-      const paragraph = wrap.querySelector(PARAGRAPH);
-      const button = wrap.querySelector(BUTTON);
-      const paragraphSplit = runSplit(paragraph, "lines, words");
-      let isTop = false;
-      if (index === 0) {
-        isTop = true;
-      }
-      let direction = 1;
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: wrap,
-          start: isTop ? "center 25%" : "top center",
-          end: "bottom center",
-          ease: "none",
-          scrub: true,
-          markers: true
-        }
+    wraps.forEach((currentWrap, activeIndex) => {
+      const left = currentWrap.querySelector(LEFT);
+      const right = currentWrap.querySelector(RIGHT);
+      const arrowTop = currentWrap.querySelector(ARROW_TOP);
+      const arrowBot = currentWrap.querySelector(ARROW_BOTTOM);
+      const heading = currentWrap.querySelector(HEADING);
+      const services = currentWrap.querySelector(SERVICES);
+      const button = currentWrap.querySelector(BUTTON);
+      const paragraph = currentWrap.querySelector(PARAGRAPH);
+      const paragraphSplit = runSplit(paragraph, "lines");
+      paragraphSplit.lines.forEach((line, index) => {
+        line.insertAdjacentHTML("afterend", `<div class="work_para_line_wrap"></div>`);
+        const lineWrap = line.nextElementSibling;
+        lineWrap.appendChild(line);
       });
-      console.log(paragraphSplit);
-      if (!isTop) {
-        tl.set(right, { display: "flex" });
-        if (arrowTop !== null) {
-          tl.fromTo(arrowTop, { yPercent: 110 * direction }, { yPercent: 0 });
+      const nextItem = wraps[activeIndex + 1];
+      const prevItem = wraps[activeIndex - 1];
+      const activateItem = function() {
+        if (activeItem === currentWrap) {
+          wraps.forEach((wrap, index) => {
+            wrap.classList.remove(ACTIVE_CLASS, NEXT_CLASS, PREV_CLASS);
+            if (wrap !== activateItem && wrap !== nextItem && wrap !== prevItem) {
+              wrap.classList.remove(TRANSITION_CLASS);
+            }
+            if (index < activeIndex) {
+              wrap.classList.add(PREV_CLASS);
+            }
+            if (index > activeIndex) {
+              wrap.classList.add(NEXT_CLASS);
+            }
+          });
+          currentWrap.classList.add(ACTIVE_CLASS, TRANSITION_CLASS);
+          setTimeout(() => {
+            if (nextItem) {
+              nextItem.classList.add(TRANSITION_CLASS);
+            }
+            if (prevItem) {
+              prevItem.classList.add(TRANSITION_CLASS);
+            }
+          }, 20);
         }
-        tl.fromTo(heading, { yPercent: 110 * direction }, { yPercent: 0 }, "<.2");
-        tl.fromTo(services, { yPercent: 110 * direction }, { yPercent: 0 }, "<.2");
-        tl.fromTo(
-          paragraphSplit.lines,
-          { yPercent: 110 * direction, opacity: 0 },
-          { yPercent: 0, opacity: 1, stagger: { each: 0.2, from: "start" } },
-          "<.2"
-        );
-        tl.fromTo(button, { yPercent: 110 * direction }, { yPercent: 0 }, "<.2");
-        if (arrowBot !== null) {
-          tl.fromTo(arrowBot, { yPercent: 110 * direction }, { yPercent: 0 });
+      };
+      ScrollTrigger.create({
+        trigger: currentWrap,
+        start: "top 50%",
+        end: "bottom 50%",
+        markers: false,
+        onEnter: () => {
+          activeItem = currentWrap;
+          setTimeout(() => {
+            activateItem();
+          }, 150);
+        },
+        // onLeave: () => {
+        //   currentWrap.classList.add(PREV_CLASS);
+        // },
+        onEnterBack: () => {
+          activeItem = currentWrap;
+          setTimeout(() => {
+            activateItem();
+          }, 150);
         }
-        tl.to(heading, { duration: 5 });
-      }
-      if (isTop) {
-        right.style.display = "flex";
-      }
-      if (arrowTop !== null) {
-        tl.to(arrowTop, { yPercent: -110 });
-      }
-      tl.to(heading, { yPercent: -110 }, "<.2");
-      tl.to(services, { yPercent: -110 }, "<.2");
-      tl.to(
-        paragraphSplit.lines,
-        { yPercent: -110, opacity: 0, stagger: { each: 0.2, from: "start" } },
-        "<.2"
-      );
-      tl.to(button, { yPercent: -110 }, "<.2");
-      if (arrowBot !== null) {
-        tl.to(arrowBot, { yPercent: -110 });
-      }
+        // onLeaveBack: () => {
+        //   currentWrap.classList.add(NEXT_CLASS);
+        // },
+      });
     });
   };
 
@@ -2117,12 +2126,12 @@
       });
     }
     optionFieldFocus();
-    function dynamicFieldFocus(event) {
+    function dynamicFieldFocus() {
       const dyamicFields = document.querySelectorAll(".form_dynamic_field");
       if (dyamicFields.length === 0) return;
       dyamicFields.forEach(function(formField) {
-        formField.addEventListener("focus", function(event2) {
-          const formFieldParent = event2.currentTarget.closest(".form_dynamic_field_wrap");
+        formField.addEventListener("focus", function(event) {
+          const formFieldParent = event.currentTarget.closest(".form_dynamic_field_wrap");
           if (!formFieldParent) return;
           formFieldParent.querySelector(".form_dynamic_field_line").click();
         });
@@ -2539,26 +2548,26 @@
           mouseOver(gsapContext);
           scrolling(gsapContext);
           scrollIn(gsapContext);
+          sectionEdge();
           homePitchMarquee();
+          homeHeroCircles();
           blogHeaderScroll();
           blogHeaderBoxes();
+          if (!isMobile) {
+            caseMobile();
+            nextCase();
+            toggleCTABlocks();
+          }
         }
         navMenu(gsapContext);
         hoverActive(gsapContext);
-        sectionEdge();
         contact();
-        homeHeroCircles();
         if (!isMobile) {
           work();
           homeWorkHover();
         }
-        if (!isMobile || !reduceMotion) {
-          caseMobile();
-          nextCase();
-          toggleCTABlocks();
-        }
+        cursor();
         if (isDesktop || isTablet) {
-          cursor();
         }
       }
     );
