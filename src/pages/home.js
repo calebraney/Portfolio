@@ -69,14 +69,13 @@ export const homeWorkHover = function () {
       },
     });
     tl.fromTo(visual, { yPercent: 50, scaleY: 1.2 }, { yPercent: 0, scaleY: 1, duration: 0.6 });
-    // tl.fromTo(bg, { height: '0%' }, { height: '100%', ease: 'sine.in', duration: 0.3 }, '<');
+    tl.fromTo(bg, { height: '0%' }, { height: '100%', ease: 'sine.in', duration: 0.3 }, '<');
     tl.fromTo(left, { x: '0rem' }, { x: '3rem', ease: 'sine.out' }, '<');
     tl.fromTo(right, { x: '0rem' }, { x: '-3rem', ease: 'sine.out' }, '<');
     tl.fromTo(numberFirst, { yPercent: 0 }, { yPercent: -110, stagger: 0.1 }, '<.1');
     tl.fromTo(visual, { opacity: 0 }, { opacity: 1, ease: 'sine.out' }, '<');
     tl.fromTo(numberSecond, { yPercent: 110 }, { yPercent: 0, stagger: 0.1 }, '<.2');
 
-    // tl.progress(0);
     item.addEventListener('mouseenter', function (e) {
       tl.play();
     });
