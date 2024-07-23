@@ -313,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function () {
         duration: 0.3,
       },
     });
-    buttonHoverTL.fromTo(buttonBg, { width: '100%' }, { width: '2.5rem' });
+    buttonHoverTL.to(buttonBg, { width: '2.5rem' });
     buttonHoverTL.fromTo(buttonLine1, { width: '1rem' }, { width: '1.25rem' }, '<');
     buttonHoverTL.fromTo(buttonLine2, { width: '1.5rem' }, { width: '1rem' }, '<');
 
