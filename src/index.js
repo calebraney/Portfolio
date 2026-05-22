@@ -10,6 +10,8 @@ import { homePitchMarquee, homeWorkHover, homeHeroCircles } from './pages/home';
 import { work } from './pages/work';
 import { caseMobile, nextCase } from './pages/case';
 import { contact } from './pages/contact';
+import { activate } from './interactions/activate';
+
 import { blogHeaderBoxes, blogHeaderScroll } from './pages/blog';
 import { toggleClass, checkBreakpoints, scrollReset, runSplit } from './utilities';
 
@@ -476,6 +478,7 @@ document.addEventListener('DOMContentLoaded', function () {
           toggleCTABlocks();
         }
       }
+      activate();
       navMenu(gsapContext);
       hoverActive(gsapContext);
       contact();
